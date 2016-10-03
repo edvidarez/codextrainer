@@ -75,8 +75,11 @@ int main()
 
 
 
-
+<?php 
+    include "footer.php";
+ ?>
 </div>
+
 </div>
 
 <!-- Mainly scripts -->
