@@ -47,12 +47,13 @@
                 <div class="col-lg-12">
                     <div class="ibox ">
                         <div class="ibox-title">
-                            <h5>Code Editor - Basic example</h5>
+                            <h5>CodeEditor|Hola mundo</h5>
                         </div>
                         <div class="ibox-content">
 
                             <p  class="m-b-lg">
-                                <strong>CodeMirror</strong> is a versatile text editor implemented in JavaScript for the browser. It is specialized for editing code, and comes with a number of language modes and addons that implement more advanced editing functionality.
+                                <strong>Ejemplo1</strong><br>
+                                En este apartado seras capaz de escribir, compilar y probar codigo, individual o colectivamente, empieza escribiendo un hola mundo.
                             </p>
 
 <textarea id="code1">

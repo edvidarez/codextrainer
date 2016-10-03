@@ -1,123 +1,56 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>SuperheroAdmin - Bootstrap Admin Template</title>
-	
-	<!-- bootstrap -->
-	<link href="css/bootstrap/bootstrap.css" rel="stylesheet" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<!-- libraries -->
-	<link href="css/libs/font-awesome.css" type="text/css" rel="stylesheet" />
+    <title>CXT+ | Ingreso</title>
 
-	<!-- global styles -->
-	<link rel="stylesheet" type="text/css" href="css/compiled/layout.css">
-	<link rel="stylesheet" type="text/css" href="css/compiled/elements.css">
-	<link href="css/animate.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
-	<!-- this page specific styles -->
-
-	<!-- google font libraries -->
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700,300|Titillium+Web:200,300,400' rel='stylesheet' type='text/css'>
-
-	<!--[if lt IE 9]>
-		<script src="js/html5shiv.js"></script>
-		<script src="js/respond.min.js"></script>
-	<![endif]-->
-	<!--[if lt IE 8]>
-		<link href="css/libs/font-awesome-ie7.css" type="text/css" rel="stylesheet" />
-	<![endif]-->
-	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-	  ga('create', 'UA-49262924-1', 'phoonio.com');
-	  ga('send', 'pageview');
-
-	</script>
 </head>
-<body id="login-page">
-	<div class="container">
-		<div class="row">
-			<div class="col-xs-12">
-				<div id="login-box">
-					<div class="row">
-						<div class="col-xs-12 clearfix" id="login-box-header">
-							<div class="login-box-header-red"></div>
-							<div class="login-box-header-green"></div>
-							<div class="login-box-header-yellow"></div>
-							<div class="login-box-header-purple"></div>
-							<div class="login-box-header-blue"></div>
-							<div class="login-box-header-gray"></div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							<div id="login-box-inner">
-								<!-- <img src="img/logo-login.png" alt="SuperheroAdmin" class="img-responsive" id="login-logo"/> -->
-								<div id="login-logo">
-									<img src="img/logo-login.png" alt=""/> 
-									Ingresar
-								</div>
-								
-								<form role="form" action="js/code/login_verification.php" method="POST">
-									<div class="input-group input-group-lg">
-										<span class="input-group-addon"><i class="fa fa-user"></i></span>
-										<input class="form-control" type="email" placeholder="Email address" name="email">
-									</div>
-									<div class="input-group input-group-lg">
-										<span class="input-group-addon"><i class="fa fa-key"></i></span>
-										<input type="password" class="form-control" placeholder="Password" name="password">
-									</div>
-									<div class="form-group">
-										<div class="checkbox">
-											<label>
-												<input type="checkbox" name="check_box"> Remember me
-											</label>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-xs-12">
 
+<body class="gray-bg">
 
-											
-											<button type="button" class="btn btn-info col-xs-6" onclick=" location.href='registrar.php' ">Registrate</button>
-											<button type="submit" class="btn btn-success col-xs-6 ">Ingresa</button>
-										</div>
-										
-									</div>
-									<div class="row">
-									<br>
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+        <div>
+            <div>
 
-										<a href="#" id="login-forget-link" class="col-xs-12 ">
-											Olvidaste tu contraseña?
-										</a>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<!-- global scripts -->
-	<script src="js/jquery.js"></script>
-	<script src="js/bootstrap.js"></script>
-	
-	<!-- this page specific scripts -->
+                <h1 class="logo-name">CXT+</h1>
 
-	
-	<!-- theme scripts -->
-	<script src="js/scripts.js"></script>
-	
-	<!-- this page specific inline scripts -->
-	
+            </div>
+            <h3>Bienvenido a CXT+</h3>
+            <p>Comunidad enfocada a programacion individual y en equipos.
+                <!--Continually expanded and constantly improved Inspinia Admin Them (IN+)-->
+            </p>
+            <p>Ingresa y aprovecha de la herramienta al máximo.</p>
+            <form class="m-t" role="form" action="index.html">
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Correo electronico" required="">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="Constraseña" required="">
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b">Ingresa</button>
+
+                <a href="#"><small>Olvidaste tu contraseña?</small></a>
+                <p class="text-muted text-center"><small>No tienes cuenta?</small></p>
+                <a class="btn btn-sm btn-white btn-block" href="register.html">Crea una cuenta</a>
+            </form>
+            <p class="m-t"> <small>Juez mexicano	-	 &copy; 2016</small> </p>
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
 </body>
 
+</html>

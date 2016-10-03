@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>INSPINIA | Register</title>
+    <title>CXT+ | Registrar</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
@@ -46,7 +46,7 @@
                 <button type="submit" class="btn btn-primary block full-width m-b">Registrar</button>
 
                 <p class="text-muted text-center"><small>Ya tienes una cuenta?</small></p>
-                <a class="btn btn-sm btn-white btn-block" href="login.html">Ingresa</a>
+                <a class="btn btn-sm btn-white btn-block" href="login.php">Ingresa</a>
             </form>
             <p class="m-t"> <small>Juez mexicano	-	2016</small> </p>
         </div>
