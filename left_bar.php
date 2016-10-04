@@ -14,11 +14,11 @@
                              </span> <span class="text-muted text-xs block">Software Developer <b class="caret"></b></span> </span> </a>
 
                         <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                            <li><a href="profile.html">Perfil</a></li>
+                            <li><a href="perfil.php">Perfil</a></li>
                             <li><a href="contacts.html">Contacto</a></li>
                             <li><a href="mailbox.html">Correo</a></li>
                             <li class="divider"></li>
-                            <li><a href="login.html">Salir</a></li>
+                            <li><a href="login.php">Salir</a></li>
                         </ul>
                         </div>
                     </div>
@@ -27,9 +27,16 @@
                     </div>
                 </li>
                 <li>
+                    <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">Contribuye</span> <span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a href="nuevo_documento.php">Nuevo Documento</a></li>
+                        
+                    </ul>
+                </li>
+                <li>
                     <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">Aprende</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li><a href="#">C</a></li>
+                        <li><a href="code.php">C</a></li>
                         <li><a href="#">C++</a></li>
                         <li><a href="#">Java</a></li>
                     </ul>

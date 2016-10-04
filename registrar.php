@@ -15,7 +15,36 @@
     <link href="css/style.css" rel="stylesheet">
 
 </head>
-
+<?php 
+	include ("DB/conexion.php");
+	if(isset($_POST['usuario']))
+	{
+		$correo = $_POST['correo'];
+		$usuario = $_POST['usuario'];
+    	$pass = $_POST['pass'];
+    	$cnx = new Conexion();
+    	$query = "Select * from usuarios where correo = '".$correo."';";
+    	echo $query;
+	    $cnx->ejecutar($query);
+	    echo $cnx->numRows;
+	    if($cnx->numRows===1)
+	    {
+	    	echo "El correo ya está registrado";
+	    }
+	    else
+	    {
+	    	$query = "INSERT into usuarios (usuario,nombre,correo,password,telefono,puntos,fecha_ingreso,estado,rol) values ('".$usuario."','','".$correo."','".MD5($pass)."','',0,NOW(),0,1)";
+	    		if($cnx->ejecutar($query))
+	    		{
+	    			echo "se inserto";
+	    		}
+	    		else
+	    		{
+	    			echo "no se inserto";
+	    		}
+	    }
+	}
+ ?>
 <body class="gray-bg">
 
     <div class="middle-box text-center loginscreen   animated fadeInDown">
@@ -27,15 +56,15 @@
             </div>
             <h3>Registrate en CXT+</h3>
             <p>Crea una nueva cuenta para entrar en accion</p>
-            <form class="m-t" role="form" action="login.html">
+            <form class="m-t" role="form" action="registrar.php">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Usuario" required="">
+                    <input type="text" class="form-control" placeholder="Usuario" required="" name="usuario">
                 </div>
                 <div class="form-group">
-                    <input type="email" class="form-control" placeholder="Email" required="">
+                    <input type="email" class="form-control" placeholder="Email" required="" name="correo">
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" placeholder="Contraseña" required="true">
+                    <input type="password" class="form-control" placeholder="Contraseña" required="true" name="passw">
                 </div>
                  <div class="form-group">
                     <input type="password" class="form-control" placeholder="Contraseña" required="true">

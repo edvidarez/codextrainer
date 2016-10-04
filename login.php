@@ -5,7 +5,29 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <?php 
+    include("DB/conexion.php");
+    
+    if(isset($_POST['correo']) && isset($_POST['pass']))
+    {
+    	$correo = $_POST['correo'];
+    	$pass = $_POST['pass'];
+    	$cnx = new Conexion();
+    	$query = "Select * from usuarios where correo = '".$correo."';";
+    	echo $query;
+	    $cnx->ejecutar($query);
+	    echo $cnx->numRows;
+	    if($cnx->numRows===1)
+	    {
+	    	echo "El usuario existe";
+	    }
+	    else
+	    {
+	    	echo "No existe ese usuario";
+	    }
+    }
+    
+     ?>
     <title>CXT+ | Ingreso</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -30,12 +52,12 @@
                 <!--Continually expanded and constantly improved Inspinia Admin Them (IN+)-->
             </p>
             <p>Ingresa y aprovecha de la herramienta al máximo.</p>
-            <form class="m-t" role="form" action="index.html">
+            <form class="m-t" role="form" action="login.php" method="POST">
                 <div class="form-group">
-                    <input type="email" class="form-control" placeholder="Correo electronico" required="">
+                    <input type="email" class="form-control" placeholder="Correo electronico" required="" name="correo">
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" placeholder="Constraseña" required="">
+                    <input type="password" class="form-control" placeholder="Constraseña" required="" name="pass">
                 </div>
                 <button type="submit" class="btn btn-primary block full-width m-b">Ingresa</button>
 

@@ -51,13 +51,16 @@
                             </div>
                         </div>
                         <div class="ibox-content">
+                        
+                   
                             <form method="get" class="form-horizontal">
                                 <div class="form-group"><label class="col-sm-2 control-label">Titulo</label>
 
                                     <div class="col-sm-10"><input type="text" class="form-control"></div>
                                 </div>
-                                
-                                    <div class="summernote">
+                                <button id="edit" class="btn btn-primary"  type="button">Edit 1</button>
+                        <button id="save" class="btn btn-primary"  type="button">Save 2</button>
+                                    <div class="click2edit">
                                                                              <p>
                                         </p><h3>Descripción</h3>
                                         Tu profesor de Estructuras de Datos ha escrito una expresión muy compleja en el pizarrón. Sin embargo, no sabe si los paréntesis "()" y los corchetes "{}" están completamente balanceados, es decir, todo paréntesis o corchete está cerrado, considerando que ningún corchete puede cerrar a un paréntesis o viceversa. <br> Dada la expresión que tu profesor te ha mostrado, determina si está balanceada o no.
@@ -172,8 +175,28 @@
                     checkboxClass: 'icheckbox_square-green',
                     radioClass: 'iradio_square-green',
                 });
+
                 $('.chosen-select').chosen({width: "100%"});
                    $('.summernote').summernote();
+                 
+                $("#edit").click(function(){
+                    $('.click2edit').summernote({focus: true,toolbar: [
+    // [groupName, [list of button]]
+    ['style', ['bold', 'italic', 'underline', 'clear']],
+    ['font', ['strikethrough', 'superscript', 'subscript']],
+    ['fontsize', ['fontsize']],
+    ['color', ['color']],
+    ['para', ['ul', 'ol', 'paragraph']],
+    ['height', ['height']]
+  ]});
+                });
+
+                $("#save").click(function(){
+                    $('.click2edit').summernote('destroy');
+                });
+                    
+
+                    
             });
         </script>
 </body>
