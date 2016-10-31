@@ -27,9 +27,10 @@
                     </div>
                 </li>
                 <li>
-                    <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">Contribuye</span> <span class="fa arrow"></span></a>
+                    <a href="index.html"><i class="fa fa-plus"></i> <span class="nav-label">Contribuye</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
                         <li><a href="nuevo_documento.php">Nuevo Documento</a></li>
+                        <li><a href="crear_mundo.php">Nuevo Mundo</a></li>
                         
                     </ul>
                 </li>
@@ -39,6 +40,7 @@
                         <li><a href="code.php">C</a></li>
                         <li><a href="#">C++</a></li>
                         <li><a href="#">Java</a></li>
+                        <li><a href="mundo.php">K3D</a></li>
                     </ul>
                 </li>
                 <li>

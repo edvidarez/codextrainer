@@ -7,27 +7,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php 
     include("DB/conexion.php");
-    
+    session_start();
+    if(isset($_SESSION['UserID']))
+    {
+         header("location:home.php");
+    }
+    else
     if(isset($_POST['correo']) && isset($_POST['pass']))
     {
     	$correo = $_POST['correo'];
     	$pass = $_POST['pass'];
     	$cnx = new Conexion();
     	$query = "Select * from usuarios where correo = '".$correo."';";
-    	echo $query;
-	    $cnx->ejecutar($query);
-	    echo $cnx->numRows;
+    	//echo $query;
+	    $rs=$cnx->ejecutar($query);
+	    echo $cnx->getNumRows($rs);
 	    if($cnx->numRows===1)
 	    {
-	    	echo "El usuario existe";
+            $ar=$cnx->fetchArray();
+            if( $ar['password']=== MD5($_POST['pass']))
+            {
+               // echo "session iniciada correctamente";
+                $_SESSION['UserID']=$ar['id'];
+                //echo $_SESSION['UserID'];
+                header("location:home.php");
+            }
+            else
+            {
+            echo "Contraseña incorrecta";    
+            }
+	    	
 	    }
 	    else
 	    {
 	    	echo "No existe ese usuario";
 	    }
     }
-    
+    else
+    {
      ?>
+    
     <title>CXT+ | Ingreso</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -76,3 +95,4 @@
 </body>
 
 </html>
+<?php } ?>
