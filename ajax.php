@@ -60,6 +60,19 @@ function UX()  //no jala
 	
 	
 }
+function renderWorld()
+{
+	//echo $world;
+
+	//echo $_POST['world'];
+	$_SESSION['tmp_world']=$_POST['world'];
+	$_SESSION['x']=$_POST['x'];
+	$_SESSION['y']=$_POST['y'];
+	echo 1;
+	//echo $_SESSION['tmp_world'];
+	//echo "<script>console.log('".$world."');</script>";
+	//echo '<script>window.open("render_world.php", "", "width=800,height=600"); </script>';
+}
 switch($_REQUEST['cmd'])
 {
 	case "eventos":
@@ -68,6 +81,10 @@ switch($_REQUEST['cmd'])
 	case "guardarMundo":
 		guardar_mundo();
 		break;
+	case "renderWorld":
+
+		 renderWorld();
+		 break;
 	case "UX":
 		UX();
 		break;

@@ -1,6 +1,6 @@
 <?php 
     session_start();
-    if(isset($_SESSION['UserID']))
+    if(!isset($_SESSION['UserID']))
     {
         header("location:index.php");
     }
@@ -295,7 +295,7 @@ function drawGrid()
         for(j=0;j<colums;j++)
         {
            elements.push({
-                colour: '#111111',
+               // colour: '#111111',
                 width: 50,
                 height: 50,
                 top: 50*i,
@@ -349,7 +349,7 @@ renderGrid();
 function toJson(e)
 {
     var response=(JSON.stringify(e));
-    console.log(response);
+    //console.log(response);
     return response;
 }
 
@@ -358,7 +358,16 @@ $(".touchspin1").TouchSpin({
                 buttonup_class: 'btn btn-white',
                 initval: 0
             });
+function getWorld()
+{
+    var myWorld = [];
+            
+            myWorld.push({
+                "world":elements
 
+            });
+            return myWorld;
+}
 $("#save").on("click",function()
     {
         titulo = document.getElementById("titulo");
@@ -369,19 +378,11 @@ $("#save").on("click",function()
         }
         else
         {
-            var myWorld = [];
-            myWorld.push({
-                "x":colums,
-                "y":rows 
-            });
-            myWorld.push({
-                "world":elements
-
-            });
+            var myWorld = getWorld();
             $.ajax({
                 url:'ajax.php?cmd=guardarMundo',
                 method:"POST",
-                data: {world:toJson(myWorld),ligths:ligths,titulo:titulo.value},
+                data: {world:toJson(getWorld()).replace('\n',''),ligths:ligths,titulo:titulo.value},
                 datatype:"json",
                 success:function(response)
                 {
@@ -399,6 +400,22 @@ $("#save").on("click",function()
 
             });
         }
+    });
+    $("#preview_world").on("click",function(event){
+       //alert(toJson(getWorld()));
+         $.ajax({
+                url:'ajax.php?cmd=renderWorld',
+                method:"POST",
+                data: {world:toJson(getWorld()).replace('\n',''),ligths:ligths,titulo:titulo.value,"x":colums,"y":rows},
+                datatype:"json",
+                success:function(response)
+                {
+                    console.log(response);
+                   window.open("render_world.php", "", "width=800,height=600");
+                }
+
+
+            });
     });
 </script>
 </body>
