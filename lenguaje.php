@@ -115,7 +115,7 @@ asd
              $("#new").on("click",function(){
                 code.setValue("iniciar-programa\n    inicia-ejecucion\n        apagate;\n    termina-ejecucion\nfinalizar-programa");
              });
-         });
+         }); 
 
 </script>
 </body>
