@@ -96,6 +96,28 @@ asd
 <!-- iCheck -->
 <script src="js/plugins/iCheck/icheck.min.js"></script>
   <script>
+        var instructions = [
+                            "apagate",
+                            "avanza",
+                            "gira-izquierda",
+                            "si",
+                            "entonces",
+                            "mientras",
+                            "hacer",
+                            "iniciar-programa",
+                            "inicia-ejecucion",
+                            "termina-ejecucion",
+                            "finalizar-programa",
+                            function getUserDeclaredFunctions()
+                            {
+                                return"si se declararon funciones del usuario esta funcion deberia de buscarlas para revisar que esten dentro";
+                            },
+                            "inicio",
+                            "fin",
+                            "repetir",
+                            "no"
+                            ];
+        //console.log(instructions[11]());
          $(document).ready(function(){
             
              var code = CodeMirror.fromTextArea(document.getElementById("code"), {
@@ -110,10 +132,16 @@ asd
              var code;
              
              $('#ok').on("click",function(){
-                alert(code.getValue());
+              //  alert(code.getValue());
+                var myCode = code.getValue().split(/\n|\t/);
+
+                for(w in myCode)
+                    if(myCode[w]!='')
+                    console.log(myCode[w]);
+                
              });
              $("#new").on("click",function(){
-                code.setValue("iniciar-programa\n    inicia-ejecucion\n        apagate;\n    termina-ejecucion\nfinalizar-programa");
+                code.setValue("iniciar-programa\n\tinicia-ejecucion\n\t\tapagate;\n\ttermina-ejecucion\nfinalizar-programa");
              });
          }); 
 
