@@ -95,6 +95,7 @@ asd
 <script src="js/jquery-ui.custom.min.js"></script>
 <!-- iCheck -->
 <script src="js/plugins/iCheck/icheck.min.js"></script>
+<script src="release/js/example.js"></script>
   <script>
         var instructions = [
                             "apagate",
@@ -115,8 +116,18 @@ asd
                             "inicio",
                             "fin",
                             "repetir",
-                            "no"
+                            "no",
+                            "y",
+                            "o"
                             ];
+            var expresions = [
+                                "frente-libre",
+                                "frete-bloqueado",
+                                "orientado-al-norte",
+                                "orientado-al-este",
+                                "orientado-al-sur",
+                                "orientado-al-oeste"
+            ];
         //console.log(instructions[11]());
          $(document).ready(function(){
             
