@@ -1,0 +1,17 @@
+{
+  "name": "project",
+  "dependencies": {},
+  "description": "falta crear el archivo que valide un codigo en pseudo-pascal utilizando el automata.\r Se agrego el archivo Lenguaje.php donde esta toda la logica del analizador del lenguaje",
+  "version": "1.0.0",
+  "main": "",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edvidarez/proyecto3D/"
+  },
+  "author": "edmundo",
+  "license": "ISC"
+}
