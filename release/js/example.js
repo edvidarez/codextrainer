@@ -7,15 +7,46 @@ var transicion = (function () {
     }
     return transicion;
 }());
-transition = new transicion("2", "2", "2");
 var estado = (function () {
     function estado() {
     }
     return estado;
 }());
 var AP = (function () {
-    function AP() {
+    function AP(code) {
+        for (var w in code) {
+            console.log(code[w]);
+        }
     }
     return AP;
 }());
-alert(transition.t1);
+var instructions = [
+    "apagate",
+    "avanza",
+    "gira-izquierda",
+    "si",
+    "entonces",
+    "mientras",
+    "hacer",
+    "iniciar-programa",
+    "inicia-ejecucion",
+    "termina-ejecucion",
+    "finalizar-programa",
+    function getUserDeclaredFunctions() {
+        return "si se declararon funciones del usuario esta funcion deberia de buscarlas para revisar que esten dentro";
+    },
+    "inicio",
+    "fin",
+    "repetir",
+    "no",
+    "y",
+    "o"
+];
+var expresions = [
+    "frente-libre",
+    "frete-bloqueado",
+    "orientado-al-norte",
+    "orientado-al-este",
+    "orientado-al-sur",
+    "orientado-al-oeste"
+];

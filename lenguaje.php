@@ -97,37 +97,6 @@ asd
 <script src="js/plugins/iCheck/icheck.min.js"></script>
 <script src="release/js/example.js"></script>
   <script>
-        var instructions = [
-                            "apagate",
-                            "avanza",
-                            "gira-izquierda",
-                            "si",
-                            "entonces",
-                            "mientras",
-                            "hacer",
-                            "iniciar-programa",
-                            "inicia-ejecucion",
-                            "termina-ejecucion",
-                            "finalizar-programa",
-                            function getUserDeclaredFunctions()
-                            {
-                                return"si se declararon funciones del usuario esta funcion deberia de buscarlas para revisar que esten dentro";
-                            },
-                            "inicio",
-                            "fin",
-                            "repetir",
-                            "no",
-                            "y",
-                            "o"
-                            ];
-            var expresions = [
-                                "frente-libre",
-                                "frete-bloqueado",
-                                "orientado-al-norte",
-                                "orientado-al-este",
-                                "orientado-al-sur",
-                                "orientado-al-oeste"
-            ];
         //console.log(instructions[11]());
          $(document).ready(function(){
             
@@ -145,10 +114,11 @@ asd
              $('#ok').on("click",function(){
               //  alert(code.getValue());
                 var myCode = code.getValue().split(/\n|\t/);
-
                 for(w in myCode)
-                    if(myCode[w]!='')
-                    console.log(myCode[w]);
+                    if(myCode[w]=='')
+                        delete myCode[w];
+                    //console.log(myCode[w]);
+                var automata = new AP(myCode);
                 
              });
              $("#new").on("click",function(){

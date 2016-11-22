@@ -6,9 +6,12 @@ declare class transicion {
     constructor(t1: string, t2: string, t3: string);
 }
 declare class estado {
-    transiciones: string;
+    transiciones: Array<transicion>;
     constructor();
 }
 declare class AP {
     states: Array<estado>;
+    constructor(code: Array<string>);
 }
+declare var instructions: (string | (() => string))[];
+declare var expresions: string[];

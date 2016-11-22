@@ -1,4 +1,5 @@
 var stack = [];
+
 class transicion{
 	//var t1,t2,t3; // lo que entra, lo que esta en la pila, como dejara la pila
 	t1:string;
@@ -11,17 +12,52 @@ class transicion{
 	}
 }
 
-transition=new transicion("2","2","2");
-
 class estado {
 
-	transiciones:string;
+	transiciones:Array<transicion>;
 	constructor(){
 
 	} 
 }
 class AP {
 	states:Array<estado>;
+	constructor(code:Array<string>){
+		for(var w in code)
+		{
+				console.log(code[w]);	
+		}
+		
+	}
 }
 
-alert(transition.t1);
+var instructions = [
+                            "apagate",
+                            "avanza",
+                            "gira-izquierda",
+                            "si",
+                            "entonces",
+                            "mientras",
+                            "hacer",
+                            "iniciar-programa",
+                            "inicia-ejecucion",
+                            "termina-ejecucion",
+                            "finalizar-programa",
+                            function getUserDeclaredFunctions()
+                            {
+                                return"si se declararon funciones del usuario esta funcion deberia de buscarlas para revisar que esten dentro";
+                            },
+                            "inicio",
+                            "fin",
+                            "repetir",
+                            "no",
+                            "y",
+                            "o"
+                            ];
+            var expresions = [
+                                "frente-libre",
+                                "frete-bloqueado",
+                                "orientado-al-norte",
+                                "orientado-al-este",
+                                "orientado-al-sur",
+                                "orientado-al-oeste"
+            ];
