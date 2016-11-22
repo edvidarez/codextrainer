@@ -113,7 +113,7 @@ asd
              
              $('#ok').on("click",function(){
               //  alert(code.getValue());
-                var myCode = code.getValue().split(/\n|\t/);
+                var myCode = code.getValue().split(/\n|\t| /);
                 for(w in myCode)
                     if(myCode[w]=='')
                         delete myCode[w];
