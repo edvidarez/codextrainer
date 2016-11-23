@@ -8,7 +8,7 @@ declare class transicion {
     constructor(name: string, t1: string, t2: string, t3: string, est: estado);
 }
 declare var analizador_flag: boolean;
-declare var q0: any, q1: any, qErr: any;
+declare var q0: any, q1: any, qErr: any, qf1: any, qff: any, qm1: any;
 declare class estado {
     type: number;
     transiciones: Array<transicion>;
