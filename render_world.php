@@ -32,6 +32,7 @@ session_start();
 <script id="2d-vertex-shader" type="notjs"></script>
 <script id="2d-fragment-shader" type="notjs"></script>
 <script type="text/javascript" src="cylinder.js"></script>
+<script type="text/javascript" src="player.js"></script>
 
 <script type="text/javascript">
 var fragment_shader;
@@ -39,8 +40,9 @@ var vertexBuffer;
 var positionBuffer;
 var motionType = 0;
 var cameraAngle = 0,cameraX=0,cameraZ=0,cameraY=0,cameraAngleY=0,cameraPosX=0,cameraPosY=0;
-var  angleSpeed = 7,speed = 7;
-var then=0,deltaTime;
+var  angleSpeed = 7,speed = 7, playerAction =0;
+var then=0,deltaTime,idleAnimStat=1;
+var playerMtx;
 function createShader(gl, type, source) {
     var shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -275,15 +277,37 @@ function createMap(){
           myMap.push(new Cylinder(gl,world[0][k][o].altura*4,global_radius,global_radius,4,world[0][k][o].altura,color,color));
         }
       }
-
-    
-    
    }
+   var idleStat = 0;
+   function idle(){
+
+
+     idleStat+=0.003*idleAnimStat;
+      if(idleStat>0.05 || idleStat<0)
+      {
+       // idleStat=0;
+        idleAnimStat*=-1;
+      }
+      playerMtx = scale(playerMtx,1+idleStat,1+idleStat,1+idleStat);
+   }
+  function avanza()
+  {
+
+  }
+  function giraIzquierda(){
+
+  }
+  function brinca(){
+
+  }
+
  function display(now)
  {
+  playerMtx = Mat4();
   now *= 0.015;
   // Subtract the previous time from the current time
   deltaTime = now - then;
+ 
   // Remember the current time for the next frame.
   then = now;
 gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
@@ -300,6 +324,13 @@ gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
     case 8: rotateDown(); break;
     case 9: moveLeft(); break;
     case 10: moveRigth(); break;
+  }
+  switch(playerAction)
+  {
+    case 0 : idle();break;
+    case 1 : avanza(); break;
+    case 2 : giraIzquierda(); break;
+    case 3 : brinca(); break;
   }
   gl.useProgram(program);
   var vMat = Mat4();
@@ -325,9 +356,9 @@ for(var k in world[0])
           var csy = world[0][k][o].description[1];
           var h = world[0][k][o].altura;
           csMat = translate(csMat,
-                            csx*global_radius*Math.sqrt(2) + cont%globalx*0.00001,
+                            csx*global_radius*Math.sqrt(2) ,//+ cont%globalx * 0.00001
                             h*2,
-                            csy*global_radius*Math.sqrt(2) + cont/globaly * 0.00001);
+                            csy*global_radius*Math.sqrt(2) );//+ cont/globaly * 0.00001
 
           cylinderBind(gl,myMap[cont],vertexPosLoc,vertexColLoc);  
           gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
@@ -357,6 +388,14 @@ var csMat2 = Mat4();
 
   cylinderBindTip(gl,myCylinder2,vertexPosLoc,vertexColLoc);
   cylinderDrawTip(gl,myCylinder2);
+
+    
+    playerMtx = translate(playerMtx,5*global_radius*Math.sqrt(2),1,5*global_radius*Math.sqrt(2));
+    playerBind(gl,player,vertexPosLoc,vertexColLoc);
+    gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
+    gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
+    playerDraw(gl,player);
+
      requestAnimationFrame(display);
    
  }
@@ -407,10 +446,12 @@ $(document).ready(function(){
   //
   var color11 = [0.9,0.4,0.7];
   var color21 = [0.3,0.1,0.2];
+  var playerColor = [1,0,0];
   myCylinder = new Cylinder(gl,5,2,1,5,10,color11,color21);
   color1 = [0.4,0.2,0.7];
   color2 = [0.2,0.74,0.537];
   myCylinder2 = new Cylinder(gl,5,0.5,2,4,5,color11,color21);
+  player = new Player(gl,1.1,playerColor);
   console.log(myCylinder2.tapa_v.length);
   console.log(myCylinder2.tapa_c.length);
   //

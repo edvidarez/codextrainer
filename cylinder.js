@@ -117,7 +117,7 @@ function Cylinder(gl,length,bottomRadius,topRadius,slices,stacks, bottomColor, t
 function cylinderBind(gl,c,vLoc,cLoc)
 {
 
-	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[0]);  //corregir que no se envien los datos mientras se renderiza
+	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[0]); 
 	//gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(c.vertices),gl.STATIC_DRAW);
 	gl.enableVertexAttribArray(vLoc);
  	gl.vertexAttribPointer(vLoc, 3,gl.FLOAT,false,0,0);

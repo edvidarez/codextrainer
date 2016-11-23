@@ -114,10 +114,18 @@ asd
              $('#ok').on("click",function(){
               //  alert(code.getValue());
                 var myCode = code.getValue().split(/\n|\t| /);
-                for(w in myCode)
-                    if(myCode[w]=='')
-                        delete myCode[w];
-                    //console.log(myCode[w]);
+                for(var w=0;w<myCode.length;w++)
+                    if(myCode[w].length==0)
+                    {
+                        console.log("delete "+w+"   "+myCode[w]);
+                        myCode.splice(w,1);
+                        w--;
+                    }
+                    else
+                    {
+                        console.log("stay "+w+ "  "+myCode[w]);
+                    }
+                    console.log(myCode);
                 var automata = new AP(myCode);
                 
              });

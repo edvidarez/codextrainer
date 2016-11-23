@@ -1,8 +1,8 @@
 <?php 
     session_start();
-    if(!isset($_SESSION['UserID']))
+    if(isset($_SESSION['UserID']))  // lo quite
     {
-        header("location:index.php");
+     //   header("location:index.php");
     }
     else
     {

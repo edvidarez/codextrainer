@@ -17,7 +17,7 @@ class transicion{
 	
 }
 var analizador_flag=false;
-var q0,q1,qErr,qf1,qff,qm1;
+var q0,q1,qErr,qf1,qff,qm1,s1;
 class estado {
 
 	type:number;  //0 inicial,1 normal, 2 final
@@ -38,11 +38,15 @@ class estado {
 		}
 		//algo por aqui esta mal
 		analizador_flag=true;
+		console.log("error");
 		return new estado(2,[
-		new transicion("",'.','.','.',qErr)
+		new transicion("Error",'.','.','.',qErr)
 		]);
 	}
 }
+	s1 = new estado(0,[
+			new transicion("",'.','.','.',qErr)
+		]);
 	qff = new estado(2,[
 			new transicion("finalizar-programa",'.','.','.',qErr)
 		]);
@@ -56,6 +60,7 @@ class estado {
 			qm1.transiciones.push(new transicion("gira-izquierda;",'.','.','.',qm1));
 			qm1.transiciones.push(new transicion("brincar;",'.','.','.',qm1));
 			qm1.transiciones.push(new transicion(";",'.','.','.',qm1));
+			qm1.transiciones.push(new transicion("si",'.','.','.',s1));
 	q1 = new estado(0,[
 			new transicion("inicia-ejecucion",'.','.','.',qm1)
 		]);
@@ -66,11 +71,16 @@ class estado {
 		
 	]);
 
+	qErr.transiciones.push(new transicion("",'.','.','.',qErr));
+
+
 class AP {
 	states:Array<estado>;
 	current_state:estado;
 
 	constructor(code:Array<string>){
+		console.log(code);
+	//	console.log(code.clean(""));
 		analizador_flag=false;
 		this.current_state = q0;
 		//console.log(code.length);
@@ -81,14 +91,36 @@ class AP {
             	if( Number(w)+1 < code.length)
             	{
                 	this.current_state = this.current_state.exec(code[w]);
-                    console.log("paso exitosamente:" + code[w]);
-                   //console.log(this.current_state);
                 }
+                else
+                {
+                	if(code[w]!=="finalizar-programa")
+                	{
+                		console.log("else");
+                		analizador_flag=true;
+                		alert("Error en finalizar-programa");
+                		break;
+                	}
+                }
+                if(this.current_state.transiciones[0].name !="Error")
+                {
+                    console.log("paso exitosamente:" + code[w]);
+                }
+                else
+                {
+                	console.log(this.current_state.transiciones[0].name);
+                	analizador_flag=true;
+               
+	                alert("error de sintaxis cerca de " + code[w]);
+	                break;
+                }
+                   //console.log(this.current_state);
+                
             }
             catch (e) {
             	analizador_flag=true;
                
-                alert("error de sintaxis cerca de " + code[w]);
+                alert("error de sintaxis cerca de_ " + code[w]);
                 break;
             
             }
