@@ -1,5 +1,6 @@
 <?php 
 session_start();
+
     if(isset($_SESSION['tmp_world']))
     {
       //echo $_SESSION['x'];
@@ -7,12 +8,14 @@ session_start();
      // var_dump(json_decode($_SESSION['tmp_world']));
       
    ?>
+
    <script type="text/javascript">
      var world = '<?php echo $_SESSION['tmp_world']; ?>';
      var globalx = '<?php echo $_SESSION['x']; ?>';
       var globaly = '<?php echo $_SESSION['y']; ?>';
      world= JSON.parse(world);
      console.log( globalx,globaly,world);
+    
    </script>
 <!DOCTYPE html>
 <html>
@@ -33,8 +36,12 @@ session_start();
 <script id="2d-fragment-shader" type="notjs"></script>
 <script type="text/javascript" src="cylinder.js"></script>
 <script type="text/javascript" src="player.js"></script>
+<script type="text/javascript" src="stats.js"></script>
 
 <script type="text/javascript">
+var stats = new Stats();
+    stats.showPanel( 0); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild( stats.dom );
 var fragment_shader;
 var vertexBuffer;
 var positionBuffer;
@@ -288,7 +295,10 @@ function createMap(){
        // idleStat=0;
         idleAnimStat*=-1;
       }
-      playerMtx = scale(playerMtx,1+idleStat,1+idleStat,1+idleStat);
+
+      playerMtx = translate(playerMtx,0,5*idleStat,0);
+    //  playerMtx = scale(playerMtx,1+idleStat,1+idleStat,1+idleStat);
+
    }
   function avanza()
   {
@@ -303,6 +313,7 @@ function createMap(){
 
  function display(now)
  {
+  stats.begin();
   playerMtx = Mat4();
   now *= 0.015;
   // Subtract the previous time from the current time
@@ -396,7 +407,15 @@ var csMat2 = Mat4();
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
     playerDraw(gl,player);
 
+    playerCompassBind(gl,player,vertexPosLoc,vertexColLoc);
+    gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
+    gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
+    playerCompassDraw(gl,player);
+
+    stats.end();
+   // setTimeout(function() {
      requestAnimationFrame(display);
+  // },1000/67);
    
  }
 
@@ -446,7 +465,7 @@ $(document).ready(function(){
   //
   var color11 = [0.9,0.4,0.7];
   var color21 = [0.3,0.1,0.2];
-  var playerColor = [1,0,0];
+  var playerColor = [.5,0,.5];
   myCylinder = new Cylinder(gl,5,2,1,5,10,color11,color21);
   color1 = [0.4,0.2,0.7];
   color2 = [0.2,0.74,0.537];
