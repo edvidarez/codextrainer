@@ -14,6 +14,7 @@ session_start();
      var globalx = '<?php echo $_SESSION['x']; ?>';
       var globaly = '<?php echo $_SESSION['y']; ?>';
      world= JSON.parse(world);
+     console.log(world);
      //console.log( globalx,globaly,world);
     
    </script>
@@ -28,8 +29,8 @@ session_start();
   
 </div>
 </body>
-<script src="http://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
-<script src="http://webglfundamentals.org/webgl/resources/webgl-lessons-helper.js"></script>
+<!-- <script src="http://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
+<script src="http://webglfundamentals.org/webgl/resources/webgl-lessons-helper.js"></script> -->
 <script src="jquery.js"></script>
 <script type="text/javascript" src="Mat4.js"></script>
 <script id="2d-vertex-shader" type="notjs"></script>
@@ -39,6 +40,8 @@ session_start();
 <script type="text/javascript" src="cylinder.js"></script>
 <script type="text/javascript" src="player.js"></script>
 <script type="text/javascript" src="stats.js"></script>
+<script type="text/javascript" src="webgl_utils.js"></script>
+<script type="text/javascript" src="webgl_helper.js"></script>
 
 <script type="text/javascript">
 var stats = new Stats();
@@ -54,6 +57,13 @@ var  angleSpeed = 7,speed = 7, playerAction =0,playerStackMtx;
 var then=0,deltaTime,idleAnimStat=1;
 var playerMtx;
  // playerMtx = Mat4();
+ function getWorldHeight(x,y){
+    if(x<0 || y<0 || x>=globalx || y>=globaly)
+        return -1;
+     return world[0]['world'][y*10+x].altura;
+   
+    //return 0;
+ }
 function createShader(gl, type, source) {
     var shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -327,10 +337,16 @@ function createMap(){
       px=player.position[0];
       py=player.position[1];
       ph=player.position[2];
+      wh = getWorldHeight(px,py);
+      if(getWorldHeight(px,py)<player.position[2])
+      {
+        player.position[2]--;
+      }
       var world_unit = global_radius*Math.sqrt(2);
       playerMtx = translate(playerMtx,px*world_unit,5*idleStat+1+ph*world_unit,py*world_unit);
    //   console.log(player.orientation);
       playerMtx = rotateY(playerMtx,90*player.orientation);
+
      // playerMtx = scale(playerMtx,1+idleStat,1+idleStat,1+idleStat);
 
    }
@@ -343,10 +359,38 @@ function createMap(){
         case 2: player.position[1]++; break;
         case 3: player.position[0]++; break;
       }
+      var px,py,ph;
+      px=player.position[0];
+      py=player.position[1];
       playerAction =0;
+      if(getWorldHeight(px,py)>player.position[2])
+      {
+        alert("Haz chocado!");
+        atras();
+        playerAction = -1;   
+      }
+      if(getWorldHeight(px,py)==-1)
+      {
+        alert("Te saliste del mundo!");
+        playerAction = -1;   
+      }
+
       
+
+
+  }
+  function atras(){
+    
+     switch(player.orientation)
+      {
+        case 0: player.position[1]++; break;
+        case 1: player.position[0]++; break;
+        case 2: player.position[1]--; break;
+        case 3: player.position[0]--; break;
+      }
   }
   function giraIzquierda(){
+      
        //aumentar
        player.orientation=(player.orientation+1)%4;
         playerAction = 0;
@@ -355,7 +399,7 @@ function createMap(){
   function brinca(){
 
       player.position[2]++;
-
+      avanza();
       //regresar a idle una vez acabada la animacion
       playerAction =0;
   }
@@ -453,6 +497,7 @@ for(var k in world[0])
     case 1 : avanza(); break;
     case 2 : giraIzquierda(); break;
     case 3 : brinca(); break;
+    default : break;
   }
     playerBind(gl,player,vertexPosLoc,vertexColLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
@@ -477,7 +522,10 @@ for(var k in world[0])
 
     stats.end();
    // setTimeout(function() {
+    
      requestAnimationFrame(display);
+    
+   
   // },1000/67);
    
  }
@@ -486,6 +534,7 @@ for(var k in world[0])
 	
 document.addEventListener("keydown", function(event) {
   var key = event.which;
+  console.log(playerAction);
   switch(key) {
     case 65: motionType = 9; break; //A
     case 68: motionType = 10; break; //D
@@ -497,12 +546,20 @@ document.addEventListener("keydown", function(event) {
     case 75: motionType = 8; break; //K
     case 81: motionType = 4; break; //Q
     case 69: motionType = 3; break; //E
-    case 32: playerAction = 3; break; //--
-    case 37: playerAction = 2; break; //<-
-    case 38: playerAction = 1; break; //^
+   
 
   }
+  if(playerAction!=-1)
+  {
+    switch(key)
+    {
+       case 32: playerAction = 3; break; //--
+    case 37: playerAction = 2; break; //<-
+    case 38: playerAction = 1; break; //^
+    }
+  }
   console.log(event.which);
+
 });
 document.addEventListener("keyup", function(event){
   motionType=0;
