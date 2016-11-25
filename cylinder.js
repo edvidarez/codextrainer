@@ -84,7 +84,7 @@ function Cylinder(gl,length,bottomRadius,topRadius,slices,stacks, bottomColor, t
 		this.tapa_v[t++] = topRadius * (Math.cos(currentAng));
 		this.tapa_v[t++] = length/2;
 		this.tapa_v[t++] = topRadius * (Math.sin(currentAng));
-		console.log(currentAng);
+		//console.log(currentAng);
 		this.tapa_c[t-3] = (topColor[0]);
 		this.tapa_c[t-2] = (topColor[1]);
 		this.tapa_c[t-1] = (topColor[2]);

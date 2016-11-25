@@ -14,7 +14,7 @@ session_start();
      var globalx = '<?php echo $_SESSION['x']; ?>';
       var globaly = '<?php echo $_SESSION['y']; ?>';
      world= JSON.parse(world);
-     console.log( globalx,globaly,world);
+     //console.log( globalx,globaly,world);
     
    </script>
 <!DOCTYPE html>
@@ -34,6 +34,8 @@ session_start();
 <script type="text/javascript" src="Mat4.js"></script>
 <script id="2d-vertex-shader" type="notjs"></script>
 <script id="2d-fragment-shader" type="notjs"></script>
+<script id="2d-vertex-shader2" type="notjs"></script>
+<script id="2d-fragment-shader2" type="notjs"></script>
 <script type="text/javascript" src="cylinder.js"></script>
 <script type="text/javascript" src="player.js"></script>
 <script type="text/javascript" src="stats.js"></script>
@@ -42,14 +44,16 @@ session_start();
 var stats = new Stats();
     stats.showPanel( 0); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild( stats.dom );
+  var player;
 var fragment_shader;
 var vertexBuffer;
 var positionBuffer;
 var motionType = 0;
 var cameraAngle = 0,cameraX=0,cameraZ=0,cameraY=0,cameraAngleY=0,cameraPosX=0,cameraPosY=0;
-var  angleSpeed = 7,speed = 7, playerAction =0;
+var  angleSpeed = 7,speed = 7, playerAction =0,playerStackMtx;
 var then=0,deltaTime,idleAnimStat=1;
 var playerMtx;
+ // playerMtx = Mat4();
 function createShader(gl, type, source) {
     var shader = gl.createShader(type);
     gl.shaderSource(shader, source);
@@ -78,18 +82,20 @@ function createProgram(gl, vertexShader, fragmentShader) {
   gl.deleteProgram(program);
 }
 var vertexPosLoc,vertexColLoc,modelMatrixLoc,projMatrixLoc,viewMatrixLoc;
-var program;
+var vertexPosLoc2,vertexColLoc2,modelMatrixLoc2,projMatrixLoc2,viewMatrixLoc2;
+var program,program_texture;
 var gl;
-function initShaders()
-{	
-  var width=document.getElementById("canvas_div").offsetWidth;
+var width=document.getElementById("canvas_div").offsetWidth;
   var canvas = document.getElementById("canvas");
   canvas.width=width;
   canvas.height=width-200;
-	gl = canvas.getContext("webgl");
-	if(!gl){
-		alert("no WebGL for you");
-	}
+  gl = canvas.getContext("webgl");
+  if(!gl){
+    alert("no WebGL for you");
+  }
+function initShaders()
+{	
+  
     var vertexShaderSource = document.getElementById("2d-vertex-shader").text;
     var fragmentShaderSource = document.getElementById("2d-fragment-shader").text;
     
@@ -109,6 +115,22 @@ function initShaders()
     modelMatrixLoc = gl.getUniformLocation(program, "modelMatrix");
     projMatrixLoc  = gl.getUniformLocation(program, "projMatrix");
     viewMatrixLoc = gl.getUniformLocation(program,"viewMatrix");
+/*
+
+    var vertexShaderSource2 = document.getElementById("2d-vertex-shader2").text;
+    var fragmentShaderSource2 = document.getElementById("2d-fragment-shader2").text;
+    
+   
+      var  vertexShader2 = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource2);
+      var  fragmentShader2 = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource2);
+   
+   
+   
+
+    //crea el programa con el vertex y el fragment shader
+    program2 = createProgram(gl, vertexShader2, fragmentShader2);
+*/
+    //faltan los loc
  }
  function createShape(){
     var squarePos = [ -2, -1,  3, //0
@@ -280,8 +302,13 @@ function createMap(){
         {
            var color = [Math.random(),Math.random(),Math.random()];
     
-          console.log(world[0][k][o].description);
-          myMap.push(new Cylinder(gl,world[0][k][o].altura*4,global_radius,global_radius,4,world[0][k][o].altura,color,color));
+        //  console.log(world[0][k][o].description);
+          myMap.push(new Cylinder(gl,
+            world[0][k][o].altura*(2)*Math.sqrt(2),
+            global_radius,global_radius,
+            4,
+            world[0][k][o].altura,
+            color,color));
         }
       }
    }
@@ -295,26 +322,48 @@ function createMap(){
        // idleStat=0;
         idleAnimStat*=-1;
       }
-
-      playerMtx = translate(playerMtx,0,5*idleStat,0);
-    //  playerMtx = scale(playerMtx,1+idleStat,1+idleStat,1+idleStat);
+      playerMtx = Mat4();
+      var px,py,ph;
+      px=player.position[0];
+      py=player.position[1];
+      ph=player.position[2];
+      var world_unit = global_radius*Math.sqrt(2);
+      playerMtx = translate(playerMtx,px*world_unit,5*idleStat+1+ph*world_unit,py*world_unit);
+   //   console.log(player.orientation);
+      playerMtx = rotateY(playerMtx,90*player.orientation);
+     // playerMtx = scale(playerMtx,1+idleStat,1+idleStat,1+idleStat);
 
    }
   function avanza()
-  {
-
+  { 
+      switch(player.orientation)
+      {
+        case 0: player.position[1]--; break;
+        case 1: player.position[0]--; break;
+        case 2: player.position[1]++; break;
+        case 3: player.position[0]++; break;
+      }
+      playerAction =0;
+      
   }
   function giraIzquierda(){
-
+       //aumentar
+       player.orientation=(player.orientation+1)%4;
+        playerAction = 0;
+        console.log("giraIzquierda");
   }
   function brinca(){
 
+      player.position[2]++;
+
+      //regresar a idle una vez acabada la animacion
+      playerAction =0;
   }
 
  function display(now)
  {
   stats.begin();
-  playerMtx = Mat4();
+
   now *= 0.015;
   // Subtract the previous time from the current time
   deltaTime = now - then;
@@ -336,20 +385,16 @@ gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
     case 9: moveLeft(); break;
     case 10: moveRigth(); break;
   }
-  switch(playerAction)
-  {
-    case 0 : idle();break;
-    case 1 : avanza(); break;
-    case 2 : giraIzquierda(); break;
-    case 3 : brinca(); break;
-  }
+ 
   gl.useProgram(program);
   var vMat = Mat4();
+  vMat = rotateX(vMat,-cameraAngleY);
+
+    vMat = rotateY(vMat, -cameraAngle);
     vMat = translate(vMat, -cameraX-cameraPosX, cameraY, -cameraZ-cameraPosY);
     vMat = translate(vMat, -12.5, -10, -50);
 
-  vMat = rotateY(vMat, -cameraAngle);
-  vMat = rotateX(vMat,-cameraAngleY);
+
   gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
   gl.uniformMatrix4fv(viewMatrixLoc, false, matValues(vMat));
 
@@ -362,15 +407,15 @@ for(var k in world[0])
           var csMat = Mat4();
         // csMat = rotateY (csMat,-angleZ*2);
        //   csMat = rotateX(csMat,89);
-        csMat = rotateY (csMat,45);
+       
           var csx=world[0][k][o].description[3];
           var csy = world[0][k][o].description[1];
           var h = world[0][k][o].altura;
           csMat = translate(csMat,
                             csx*global_radius*Math.sqrt(2) ,//+ cont%globalx * 0.00001
-                            h*2,
+                            h*global_radius*Math.sqrt(2)/2,
                             csy*global_radius*Math.sqrt(2) );//+ cont/globaly * 0.00001
-
+          csMat = rotateY (csMat,45);
           cylinderBind(gl,myMap[cont],vertexPosLoc,vertexColLoc);  
           gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
           gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(csMat));
@@ -381,7 +426,7 @@ for(var k in world[0])
         }
       }
 
-var csMat2 = Mat4();
+/*var csMat2 = Mat4();
   //csMat2 = rotateY(csMat2,45);
  // csMat2 = scale(csMat2,3,1,1);
  //csMat2 = translate(csMat2,-1,0,0);
@@ -398,19 +443,37 @@ var csMat2 = Mat4();
   cylinderDraw(gl,myCylinder2);
 
   cylinderBindTip(gl,myCylinder2,vertexPosLoc,vertexColLoc);
-  cylinderDrawTip(gl,myCylinder2);
+  cylinderDrawTip(gl,myCylinder2);*/
 
-    
-    playerMtx = translate(playerMtx,5*global_radius*Math.sqrt(2),1,5*global_radius*Math.sqrt(2));
+    //player
+   // playerMtx = translate(playerMtx,5*global_radius*Math.sqrt(2),1,5*global_radius*Math.sqrt(2));
+     switch(playerAction)
+  {
+    case 0 : idle();break;
+    case 1 : avanza(); break;
+    case 2 : giraIzquierda(); break;
+    case 3 : brinca(); break;
+  }
     playerBind(gl,player,vertexPosLoc,vertexColLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
     playerDraw(gl,player);
 
-    playerCompassBind(gl,player,vertexPosLoc,vertexColLoc);
+    //player face
+ 
+    playerFaceBind(gl,player,vertexPosLoc,vertexColLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
+    playerFaceDraw(gl,player);
+
+    //player compass
+    playerCompassMtx = rotateY(playerMtx,idleStat*100 - player.orientation*90);
+    playerCompassBind(gl,player,vertexPosLoc,vertexColLoc);
+    gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
+    gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerCompassMtx));
     playerCompassDraw(gl,player);
+
+
 
     stats.end();
    // setTimeout(function() {
@@ -434,6 +497,9 @@ document.addEventListener("keydown", function(event) {
     case 75: motionType = 8; break; //K
     case 81: motionType = 4; break; //Q
     case 69: motionType = 3; break; //E
+    case 32: playerAction = 3; break; //--
+    case 37: playerAction = 2; break; //<-
+    case 38: playerAction = 1; break; //^
 
   }
   console.log(event.which);
@@ -459,18 +525,18 @@ $(document).ready(function(){
   var aspect =  gl.canvas.width / gl.canvas.height;
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-  projMat = matrixPerspective(53,aspect,-1,-1000);
+  projMat = matrixPerspective(45,aspect,-1,-1000);
   //projMat = matrixOrtho(-30,30,-30,30,-30,30);
   createMap();
   //
   var color11 = [0.9,0.4,0.7];
   var color21 = [0.3,0.1,0.2];
-  var playerColor = [.5,0,.5];
+  var playerColor = [51/255,153/255,1];
   myCylinder = new Cylinder(gl,5,2,1,5,10,color11,color21);
   color1 = [0.4,0.2,0.7];
   color2 = [0.2,0.74,0.537];
   myCylinder2 = new Cylinder(gl,5,0.5,2,4,5,color11,color21);
-  player = new Player(gl,1.1,playerColor);
+  player = new Player(gl,1.1,playerColor,1,[2,2,0]);
   console.log(myCylinder2.tapa_v.length);
   console.log(myCylinder2.tapa_c.length);
   //

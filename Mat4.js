@@ -41,7 +41,8 @@ function mMult(m1,m2)
 			var sum = 0.0;
 			for(k = 0; k < 4; k ++) 
 			{
-				sum += m1[k][r] * m2[c][k];
+				//sum += m1[k][r] * m2[c][k];
+				sum += m1[c][k] * m2[k][r];
 			}
 			M[c][r] = sum;
 		}
