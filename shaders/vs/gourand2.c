@@ -88,13 +88,13 @@ void main() {
  
   vec3 v  = normalize(cameraPosition - worldPosition.xyz);
   
-  vec3 r = normalize((2 * n)  * dot(n, l) - l);
+  vec3 r = normalize((n * 2.0)  *  dot(n, l) - l);
   
   float factorS = clamp_f(pow(dot(r, v), exponent), 0.0, 1.0);
  
   
   vertexColorVF = ambientLight *  materialA + 
                   lightColor * (materialD * factorD + materialS * factorS);
-  vertexColorVF = clamp_v(vertexColorVF, 0, 1);
+  vertexColorVF = clamp_v(vertexColorVF, 0.0, 1.0);
 }
 

@@ -47,24 +47,26 @@ session_start();
 var stats = new Stats();
     stats.showPanel( 0); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild( stats.dom );
-  var player;
+  var player,foco;
 var fragment_shader;
 var vertexBuffer;
 var positionBuffer;
-var motionType = 0;
+var motionType = 0,lightMotion = 0;
 var cameraAngle = 0,cameraX=0,cameraZ=0,cameraY=0,cameraAngleY=0,cameraPosX=0,cameraPosY=0;
 var  angleSpeed = 7,speed = 7, playerAction =0,playerStackMtx;
 var then=0,deltaTime,idleAnimStat=1;
 var playerMtx;
-
+var lightX=10,lightY=10,lightZ=20;
 
 var ambientLight  = [1.0, 1.0,  1.0];
-var diffuseLight  = [0.0, 1.0,  1.0];
+var lightColor  = [0.0, 1.0,  1.0];
 var lightPosition = [10.0, 10.0,  20.0];
+
 var materialA     = [0.3, 0.3,  0.3];
 var materialD     = [0.6, 0.6,  0.6];
 
-
+var materialS     = [0.7,0.7,0.7];
+var exponent      = 64.0;
 
 
  // playerMtx = Mat4();
@@ -105,6 +107,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
 var vertexPosLoc,vertexColLoc,vertexNorLoc,modelMatrixLoc,projMatrixLoc,viewMatrixLoc;
 var vertexPosLoc2,vertexColLoc2,modelMatrixLoc2,projMatrixLoc2,viewMatrixLoc2;
 var ambientLigthLoc,diffuseLigthLoc,ligthPositionLoc,materialALoc,materialDLoc;
+var materialSLoc,cameraPositionLoc,exponentLoc,lightColorLoc;
 var program,program_texture;
 var gl;
 var width=document.getElementById("canvas_div").offsetWidth;
@@ -140,10 +143,15 @@ function initShaders()
     viewMatrixLoc = gl.getUniformLocation(program,"viewMatrix");
 
     ambientLightLoc   = gl.getUniformLocation(program, "ambientLight");
-  diffuseLightLoc     = gl.getUniformLocation(program, "diffuseLight");
+ // diffuseLightLoc     = gl.getUniformLocation(program, "diffuseLight");
+  lightColorLoc    = gl.getUniformLocation(program,"lightColor");
   lightPositionLoc    = gl.getUniformLocation(program, "lightPosition");
   materialALoc        = gl.getUniformLocation(program, "materialA");
   materialDLoc        = gl.getUniformLocation(program, "materialD");
+  //espectacular
+  materialSLoc        = gl.getUniformLocation(program, "materialS");
+  cameraPositionLoc   = gl.getUniformLocation(program, "cameraPosition");
+  exponentLoc         = gl.getUniformLocation(program, "exponent");
 /*
 
     var vertexShaderSource2 = document.getElementById("2d-vertex-shader2").text;
@@ -162,10 +170,12 @@ function initShaders()
     //faltan los loc
   gl.useProgram(program);
   gl.uniform3fv(ambientLightLoc,   ambientLight);
-  gl.uniform3fv(diffuseLightLoc,   diffuseLight);
+  gl.uniform3fv(lightColorLoc,  lightColor);
   gl.uniform3fv(lightPositionLoc,  lightPosition);
   gl.uniform3fv(materialALoc,      materialA);
   gl.uniform3fv(materialDLoc,      materialD);
+  gl.uniform3fv(materialSLoc,      materialS);
+  gl.uniform1f(exponentLoc,      exponent);
  }
  function createShape(){
     var squarePos = [ -2, -1,  3, //0
@@ -429,7 +439,7 @@ function createMap(){
  function display(now)
  {
   stats.begin();
-
+    
   now *= 0.015;
   // Subtract the previous time from the current time
   deltaTime = now - then;
@@ -451,7 +461,15 @@ gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
     case 9: moveLeft(); break;
     case 10: moveRigth(); break;
   }
- 
+ switch(lightMotion){
+  case 1:lightX--; break;
+  case 2: lightX++; break;
+  case 3: lightZ++; break;
+  case 4: lightZ--; break;
+  case 5:lightY--; break;
+  case 6: lightY ++; break;
+ }
+ gl.uniform3fv(lightPositionLoc,  [lightX,lightY,lightZ]);
   gl.useProgram(program);
   var vMat = Mat4();
   vMat = rotateX(vMat,-cameraAngleY);
@@ -464,6 +482,10 @@ gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
   gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
   gl.uniformMatrix4fv(viewMatrixLoc, false, matValues(vMat));
 
+// var focoMat = mat4();
+//  focoMat = translate(focoMat,lightX,lightY,lightZ);
+//  playerBind(gl,foco,);
+  //playerDraw(gl,foco);
   var cont =0;
 for(var k in world[0])
       {
@@ -570,6 +592,13 @@ document.addEventListener("keydown", function(event) {
     case 69: motionType = 3; break; //E
    
 
+   case 100: lightMotion = 1; break; //4
+   case 98: lightMotion = 3; break;  //2
+   case 104: lightMotion = 4; break;  //8
+   case 102: lightMotion = 2; break;  //6
+   case 99: lightMotion = 5; break;   //3
+   case 105: lightMotion = 6; break;  //9
+
   }
   if(playerAction!=-1)
   {
@@ -585,9 +614,10 @@ document.addEventListener("keydown", function(event) {
 });
 document.addEventListener("keyup", function(event){
   motionType=0;
+  lightMotion=0;
 }); 
 $(document).ready(function(){
-	 $.ajax({async:false,url: "shaders/vs/gourand.c", success: function(result){
+	 $.ajax({async:false,url: "shaders/vs/gourand2.c", success: function(result){
 
         $("#2d-vertex-shader").html(result);
     }});
@@ -616,11 +646,12 @@ $(document).ready(function(){
   color2 = [0.2,0.74,0.537];
   myCylinder2 = new Cylinder(gl,5,0.5,2,4,5,color11,color21);
   player = new Player(gl,1.1,playerColor,1,[2,2,0]);
+  foco = new Player(gl,0.2,playerColor,1,[0,0,0]);
   console.log(myCylinder2.tapa_v.length);
   console.log(myCylinder2.tapa_c.length);
   //
   display();
-    
+  requestAnimationFrame(display);
  
 });
    
