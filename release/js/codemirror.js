@@ -912,7 +912,7 @@
   // be wrapped, and have the extra elements added to the wrapper div
   function ensureLineWrapped(lineView) {
     if (lineView.node == lineView.text) {
-      lineView.node = elt("div",null, null, "position: relative");
+      lineView.node = elt("div", null, null, "position: relative");
       if (lineView.text.parentNode)
         lineView.text.parentNode.replaceChild(lineView.node, lineView.text);
       lineView.node.appendChild(lineView.text);
@@ -991,10 +991,7 @@
     }
     var markers = lineView.line.gutterMarkers;
     if (cm.options.lineNumbers || markers) {
-      //var fontsAwesome=elt("i",null,"fa fa-check","color:red;float:left;");
-
       var wrap = ensureLineWrapped(lineView);
-
       var gutterWrap = lineView.gutter = elt("div", null, "CodeMirror-gutter-wrapper", "left: " +
                                              (cm.options.fixedGutter ? dims.fixedPos : -dims.gutterTotalWidth) + "px");
       cm.display.input.setUneditable(gutterWrap);

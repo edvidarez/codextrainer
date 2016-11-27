@@ -14,8 +14,8 @@ class transicion{
 		this.t3 = t3;
 		this.estadoF=est;
 	}
-	
 }
+
 var analizador_flag=false;
 var q0,q1,qErr,qf1,qff,qm1,s1;
 class estado {

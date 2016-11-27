@@ -130,7 +130,7 @@ var instructions = [
 ];
 var expresions = [
     "frente-libre",
-    "frete-bloqueado",
+    "frente-bloqueado",
     "orientado-al-norte",
     "orientado-al-este",
     "orientado-al-sur",

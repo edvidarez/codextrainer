@@ -9,6 +9,7 @@
   else // Plain browser env
     mod(CodeMirror);
 })(function(CodeMirror) {
+
   var defaults = {
     pairs: "()[]{}''\"\"",
     triples: "",

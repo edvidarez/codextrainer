@@ -1,6 +1,6 @@
 <?php 
     session_start();
-    if(isset($_SESSION['UserID']))  // lo quite
+    if(false)  // lo quite
     {
      //   header("location:index.php");
     }

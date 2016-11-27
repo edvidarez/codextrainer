@@ -379,16 +379,14 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
 
   def(["text/x-c++src", "text/x-c++hdr"], {
     name: "clike",
-    keywords: words(cKeywords + " asm dynamic_cast namespace reinterpret_cast try explicit new " +
-                    "static_cast typeid catch operator template typename class friend private " +
-                    "this using const_cast inline public throw virtual delete mutable protected " +
-                    "alignas alignof constexpr decltype nullptr noexcept thread_local final " +
-                    "static_assert override"),
-    types: words(cTypes + " bool wchar_t"),
-    blockKeywords: words("catch class do else finally for if struct switch try while"),
+    keywords: words("iniciar_programa finalizar_programa si entonces veces mientras hacer"),
+    types: words("izquierda_libre izquierda_bloqueada "+
+        "orientado_al_norte orientado_al_sur orientado_al_este orientado_al_oeste no_orientado_al_norte no_orientado_al_sur "+
+        "no_orientado_al_este no_orientado_al_oeste derecha_libre derecha_bloqueada frente_libre frente_bloqueado"),
+    blockKeywords: words("catch class do else finally for if struct switch try"),
     defKeywords: words("class namespace struct enum union"),
     typeFirstDefinitions: true,
-    atoms: words("true false null"),
+    atoms: words("inicia_ejecucion termina_ejecucion inicio fin"),
     dontIndentStatements: /^template$/,
     hooks: {
       "#": cppHook,
@@ -425,7 +423,7 @@ CodeMirror.defineMode("clike", function(config, parserConfig) {
                     "do else enum extends final finally float for goto if implements import " +
                     "instanceof interface native new package private protected public " +
                     "return static strictfp super switch synchronized this throw throws transient " +
-                    "try volatile while"),
+                    "try volatile while "),
     types: words("byte short int long float double boolean char void Boolean Byte Character Double Float " +
                  "Integer Long Number Object Short String StringBuffer StringBuilder Void"),
     blockKeywords: words("catch class do else finally for if switch try while"),
