@@ -56,6 +56,17 @@ var cameraAngle = 0,cameraX=0,cameraZ=0,cameraY=0,cameraAngleY=0,cameraPosX=0,ca
 var  angleSpeed = 7,speed = 7, playerAction =0,playerStackMtx;
 var then=0,deltaTime,idleAnimStat=1;
 var playerMtx;
+
+
+var ambientLight  = [1.0, 1.0,  1.0];
+var diffuseLight  = [0.0, 1.0,  1.0];
+var lightPosition = [10.0, 10.0,  20.0];
+var materialA     = [0.3, 0.3,  0.3];
+var materialD     = [0.6, 0.6,  0.6];
+
+
+
+
  // playerMtx = Mat4();
  function getWorldHeight(x,y){
     if(x<0 || y<0 || x>=globalx || y>=globaly)
@@ -91,8 +102,9 @@ function createProgram(gl, vertexShader, fragmentShader) {
   console.log(gl.getProgramInfoLog(program));
   gl.deleteProgram(program);
 }
-var vertexPosLoc,vertexColLoc,modelMatrixLoc,projMatrixLoc,viewMatrixLoc;
+var vertexPosLoc,vertexColLoc,vertexNorLoc,modelMatrixLoc,projMatrixLoc,viewMatrixLoc;
 var vertexPosLoc2,vertexColLoc2,modelMatrixLoc2,projMatrixLoc2,viewMatrixLoc2;
+var ambientLigthLoc,diffuseLigthLoc,ligthPositionLoc,materialALoc,materialDLoc;
 var program,program_texture;
 var gl;
 var width=document.getElementById("canvas_div").offsetWidth;
@@ -122,9 +134,16 @@ function initShaders()
    
     vertexPosLoc   = gl.getAttribLocation(program, "vertexPosition");
     vertexColLoc   = gl.getAttribLocation(program, "vertexColor");
+    vertexNorLoc   = gl.getAttribLocation(program, "vertexNormal");
     modelMatrixLoc = gl.getUniformLocation(program, "modelMatrix");
     projMatrixLoc  = gl.getUniformLocation(program, "projMatrix");
     viewMatrixLoc = gl.getUniformLocation(program,"viewMatrix");
+
+    ambientLightLoc   = gl.getUniformLocation(program, "ambientLight");
+  diffuseLightLoc     = gl.getUniformLocation(program, "diffuseLight");
+  lightPositionLoc    = gl.getUniformLocation(program, "lightPosition");
+  materialALoc        = gl.getUniformLocation(program, "materialA");
+  materialDLoc        = gl.getUniformLocation(program, "materialD");
 /*
 
     var vertexShaderSource2 = document.getElementById("2d-vertex-shader2").text;
@@ -141,6 +160,12 @@ function initShaders()
     program2 = createProgram(gl, vertexShader2, fragmentShader2);
 */
     //faltan los loc
+  gl.useProgram(program);
+  gl.uniform3fv(ambientLightLoc,   ambientLight);
+  gl.uniform3fv(diffuseLightLoc,   diffuseLight);
+  gl.uniform3fv(lightPositionLoc,  lightPosition);
+  gl.uniform3fv(materialALoc,      materialA);
+  gl.uniform3fv(materialDLoc,      materialD);
  }
  function createShape(){
     var squarePos = [ -2, -1,  3, //0
@@ -302,9 +327,6 @@ function moveLeft()
  var myMap = [];
  var global_radius=2;
 function createMap(){
-
-   
-
       for(var k in world[0])
       {
         console.log(k);
@@ -415,7 +437,7 @@ function createMap(){
   // Remember the current time for the next frame.
   then = now;
 gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
- gl.clearColor(0, 0.10, 0.25, 1);
+ gl.clearColor(0.3, 0.3, 0.25, 1);
   switch(motionType) {
    // case 0:rotateRight();break;
     case 1: moveForward(); break;
@@ -460,12 +482,12 @@ for(var k in world[0])
                             h*global_radius*Math.sqrt(2)/2,
                             csy*global_radius*Math.sqrt(2) );//+ cont/globaly * 0.00001
           csMat = rotateY (csMat,45);
-          cylinderBind(gl,myMap[cont],vertexPosLoc,vertexColLoc);  
+          cylinderBind(gl,myMap[cont],vertexPosLoc,vertexColLoc,vertexNorLoc);  
           gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
           gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(csMat));
           cylinderDraw(gl,myMap[cont]);
 
-          cylinderBindTip(gl,myMap[cont],vertexPosLoc,vertexColLoc);
+          cylinderBindTip(gl,myMap[cont],vertexPosLoc,vertexColLoc,vertexNorLoc);
           cylinderDrawTip(gl,myMap[cont++]);
         }
       }
@@ -499,21 +521,21 @@ for(var k in world[0])
     case 3 : brinca(); break;
     default : break;
   }
-    playerBind(gl,player,vertexPosLoc,vertexColLoc);
+    playerBind(gl,player,vertexPosLoc,vertexColLoc,vertexNorLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
     playerDraw(gl,player);
 
     //player face
  
-    playerFaceBind(gl,player,vertexPosLoc,vertexColLoc);
+    playerFaceBind(gl,player,vertexPosLoc,vertexColLoc,vertexNorLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
     playerFaceDraw(gl,player);
 
     //player compass
     playerCompassMtx = rotateY(playerMtx,idleStat*100 - player.orientation*90);
-    playerCompassBind(gl,player,vertexPosLoc,vertexColLoc);
+    playerCompassBind(gl,player,vertexPosLoc,vertexColLoc,vertexNorLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerCompassMtx));
     playerCompassDraw(gl,player);
@@ -565,7 +587,7 @@ document.addEventListener("keyup", function(event){
   motionType=0;
 }); 
 $(document).ready(function(){
-	 $.ajax({async:false,url: "shaders/vs/camera.c", success: function(result){
+	 $.ajax({async:false,url: "shaders/vs/gourand.c", success: function(result){
 
         $("#2d-vertex-shader").html(result);
     }});
@@ -598,7 +620,7 @@ $(document).ready(function(){
   console.log(myCylinder2.tapa_c.length);
   //
   display();
-     requestAnimationFrame(display);
+    
  
 });
    

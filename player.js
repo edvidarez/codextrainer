@@ -1,28 +1,31 @@
-function initTextures() {
+/*function initTextures() {
   cubeTexture = gl.createTexture();
   cubeImage = new Image();
   cubeImage.onload = function() { 
   	handleTextureLoaded(cubeImage, cubeTexture); 
   }
   cubeImage.src = "cubetexture.png";
-}
+}*/
 
-function handleTextureLoaded(image, texture) {
+/*function handleTextureLoaded(image, texture) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
   gl.generateMipmap(gl.TEXTURE_2D);
   gl.bindTexture(gl.TEXTURE_2D, null);
-}
+}*/
 function Player(gl,size, color,orientation,position) {
 	//console.log("color:"+color);
 	var vertices,colores,nVertices,nIndices,Indexes;
 	var brujula_vetices,brujula_color,brujula_indexes;
 	var cara_vertices,cara_colores,cara_indexes;
-	var orientation,position;
+	var orientation,position,brujula_normals;
+	var normals;
+	this.brujula_normals = new Array();
 	this.bufferIDs = new Array();
 	this.vertices = new Array();
+	this.normals = new Array();
 	this.colores = new Array();
 	this.Indexes = new Array();
 	this.cara_colores = new Array();
@@ -31,10 +34,12 @@ function Player(gl,size, color,orientation,position) {
 	this.bufferIDs[0] = gl.createBuffer();   //vertices
 	this.bufferIDs[1] = gl.createBuffer();   //color
 	this.bufferIDs[2] = gl.createBuffer();	//index
+	this.bufferIDs[10] = gl.createBuffer();	//index
 
 	this.bufferIDs[3] = gl.createBuffer();   //vertices
 	this.bufferIDs[4] = gl.createBuffer();   //color
 	this.bufferIDs[5] = gl.createBuffer();	//index
+	this.bufferIDs[11] = gl.createBuffer();	//index
 
 	this.bufferIDs[6] = gl.createBuffer();   //vertices
 	this.bufferIDs[7] = gl.createBuffer();   //color
@@ -63,6 +68,18 @@ function Player(gl,size, color,orientation,position) {
 							 size,	 size,	size
 		];
 
+		this.normals = [	
+							-1,-1,-1,
+							-1,1,-1,
+							1,-1,-1,
+							1,1,-1,
+
+							-1,-1,1,
+							-1,1,1,
+							1,-1,1,
+							1,1,1
+							];
+
 		for(i = 0;i<24;i++)
 		{
 			this.colores[i]= color[i%3];
@@ -89,6 +106,14 @@ function Player(gl,size, color,orientation,position) {
 								1,1,1,
 								1,1,1
 		];
+		this.brujula_normals = [
+								0,1,0,
+								0,0,1,
+								0,1,0,
+								0,1,0,
+								0,0,1,
+								0,1,0
+								];
 		this.brujula_indexes = [0,1,2,3,4,5];
 
 
@@ -158,14 +183,20 @@ function Player(gl,size, color,orientation,position) {
 	  1.0,  1.0,
 	  0.0,  1.0
 	];
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferIDs[9]);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),gl.STATIC_DRAW);
+	/*gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferIDs[9]);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),gl.STATIC_DRAW);*/
+	
 	
 	gl.bindBuffer(gl.ARRAY_BUFFER,this.bufferIDs[0]);  
 	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.vertices),gl.STATIC_DRAW);
 
 	gl.bindBuffer(gl.ARRAY_BUFFER,this.bufferIDs[1]);
 	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.colores),gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER,this.bufferIDs[10]);
+	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.normals),gl.STATIC_DRAW);
+
+
 
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,this.bufferIDs[2]);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(this.Indexes),gl.STATIC_DRAW);
@@ -177,8 +208,13 @@ function Player(gl,size, color,orientation,position) {
 	gl.bindBuffer(gl.ARRAY_BUFFER,this.bufferIDs[4]);
 	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.brujula_color),gl.STATIC_DRAW);
 
+	gl.bindBuffer(gl.ARRAY_BUFFER,this.bufferIDs[11]);
+	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.brujula_normals),gl.STATIC_DRAW);
+
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,this.bufferIDs[5]);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(this.brujula_indexes),gl.STATIC_DRAW);
+
+
 
 
     gl.bindBuffer(gl.ARRAY_BUFFER,this.bufferIDs[6]);  
@@ -190,18 +226,28 @@ function Player(gl,size, color,orientation,position) {
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,this.bufferIDs[8]);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(this.cara_indexes),gl.STATIC_DRAW);
 
+
 }
 
-function  playerBind(gl,c,vLoc,cLoc)
+function  playerBind(gl,c,vLoc,cLoc,nLoc)
 {
 
 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[0]);
 	gl.enableVertexAttribArray(vLoc);
  	gl.vertexAttribPointer(vLoc, 3,gl.FLOAT,false,0,0);
+
 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[1]);
 	gl.enableVertexAttribArray(cLoc);
  	gl.vertexAttribPointer(cLoc, 3,gl.FLOAT,false,0,0);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[10]);
+	gl.enableVertexAttribArray(nLoc);
+ 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);
+
  	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[2]);
+ 	
+
+
     gl.enable(gl.DEPTH_TEST);
 }
 
@@ -212,9 +258,9 @@ function playerDraw(gl,c)
 	gl.drawElements(gl.TRIANGLE_STRIP,c.Indexes.length,gl.UNSIGNED_SHORT,0);
 }
 
-function  playerCompassBind(gl,c,vLoc,cLoc)
+function  playerCompassBind(gl,c,vLoc,cLoc,nLoc)
 {
-
+	//console.log("a");
 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[3]);
 	gl.enableVertexAttribArray(vLoc);
  	gl.vertexAttribPointer(vLoc, 3,gl.FLOAT,false,0,0);
@@ -222,7 +268,14 @@ function  playerCompassBind(gl,c,vLoc,cLoc)
 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[4]);
 	gl.enableVertexAttribArray(cLoc);
  	gl.vertexAttribPointer(cLoc, 3,gl.FLOAT,false,0,0);
+
+
+	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[11]);
+	gl.enableVertexAttribArray(nLoc);
+ 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);
+
  	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[5]);
+
 
     gl.enable(gl.DEPTH_TEST);
 }
