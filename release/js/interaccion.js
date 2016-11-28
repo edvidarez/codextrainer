@@ -7,23 +7,6 @@ var world;
 var globalx;
 var globaly;
 
-$.ajax({
-							url:'ajax.php',
-							method:"GET",
-							data: "{}",
-							datatype:"json",
-							success:function(response)
-							{
-							   world=JSON.parse(response);
-							   world=JSON.parse(world.world);
-							  /* console.log(typeof world);
-							   console.log(world);
-							   console.log(world[0].world);*/
-							   world = world[0].world;
-							   globalx=world.x;
-							   globaly=world.y;
-							}
-						});
 
 
 
@@ -266,9 +249,10 @@ var exponent      = 64.0;
 
  // playerMtx = Mat4();
  function getWorldHeight(x,y){
+ 	//console.log(world);
     if(x<0 || y<0 || x>=globalx || y>=globaly)
         return -1;
-     return world[y*10+x].altura;
+     return elements[y*10+x].altura;
    
     //return 0;
  }
@@ -372,116 +356,7 @@ function initShaders()
   gl.uniform3fv(materialSLoc,      materialS);
   gl.uniform1f(exponentLoc,      exponent);
  }
- function createShape(){
-    var squarePos = [ -2, -1,  3, //0
-                    -2,  1,  3,//1
-                     2, -1,  3,//2
-                     2,  1,  3,//3
 
-
-                     2, -1,  3,
-                     2,  1,  3,
-                     2, -1, -3,                 
-                     2,  2, -3,
-
-
-                     2,  1,  3,
-                    -2,  1,  3,
-                     2,  2, -3,
-                    -2,  2, -3,
-
-                    -2, -1, -3,
-                    -2,  2, -3,
-                    -2, -1,  3,
-                    -2,  1,  3,
-
-
-
-              -2,2,-3,
-              -2,-1,-3,
-
-              2,2,-3,
-              2,-1,-3,
-
-              -2,-1,-3,
-              -2,-1,3,
-              2,-1,-3,
-              2,-1,3
-
-
-
-  ];
-
-  var squareCol= [ 0,  0,  1,
-                   0,  0,  1,
-                   0,  0,  1,
-                   0,  0,  1,
-
-               1,  0,  0,
-               1,  0,  0,
-               1,  0,  0,
-               1,  0,  0,
-
-               1,  1,  0,
-               1,  1,  0,
-               1,  1,  0,
-               1,  1,  0,
-
-               0,  1,  1,
-               0,  1,  1,
-               0,  1,  1,
-               0,  1,  1
-  ];
-  var roomPos = [    -15,  5, -35,   // Muro frontal (azul)
-                     -15, -5, -35,
-                      15,  5, -35,
-                      15, -5, -35,
-
-                      15,  5,  35,
-                      15, -5,  35,
-                     -15,  5,  35,  // Muro atrás del observador (rojo)
-                     -15, -5,  35,
-
-                     -15, -5, -35,  // Piso (amarillo)
-                     -15, -5,  35,  //
-                      15, -5, -35,  //
-                      15, -5,  35,  //
-
-                    15,  5, -35,  // Techo (morado)
-                    15,  5,  35,  //
-                   -15,  5, -35,  //
-                   -15,  5,  35,  //
-  ];
-
-  var squareIndex = [  0,  1,  2,  3, 3,4,
-                          4,  5,  6,  7, 7, 8,
-                          8,  9, 10, 11, 11,12,
-                         12, 13, 14, 15
-  ];
-
-  positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer); 
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(roomPos), gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(vertexPosLoc);
-  gl.vertexAttribPointer(vertexPosLoc, 3,gl.FLOAT,false,0,0);
-
-  var colorBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER,colorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(squareCol),gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(vertexColLoc);
-  gl.vertexAttribPointer(vertexColLoc, 3,gl.FLOAT,false,0,0);
-
-
-
-  vertexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,vertexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(squareIndex),gl.STATIC_DRAW);
-  
-  //gl.enable(gl.CULL_FACE);
- //gl.frontFace(gl.CW);
-  gl.enable(gl.DEPTH_TEST);
-  gl.enable(gl.BLEND);
-  }
   function up()
   {
     cameraY--;
@@ -535,7 +410,7 @@ function createMap(){
         for(var k in world)
         {
            var color = [Math.random(),Math.random(),Math.random()];
-    		console.log(world[k].description);
+    //		console.log(world[k].description);
         //  console.log(world[0][k][o].description);
           myMap.push(new Cylinder(gl,
             world[k].altura*(2)*Math.sqrt(2),
@@ -821,41 +696,43 @@ document.addEventListener("keyup", function(event){
   lightMotion=0;
 }); 
 $(document).ready(function(){
-	 $.ajax({async:false,url: "shaders/vs/gourand2.c", success: function(result){
+	 $.ajax({url: "shaders/vs/gourand2.c", success: function(result){
 
         $("#2d-vertex-shader").html(result);
-    }});
-    $.ajax({async:false,url: "shaders/fs/color.c", success: function(result){
+        $.ajax({url: "shaders/fs/color.c", success: function(result){
     	
-        $("#2d-fragment-shader").html(result);
-        	initShaders();
-        	
+		        $("#2d-fragment-shader").html(result);
+		        	initShaders();
+		        	projMat = Mat4();
+				  var aspect =  gl.canvas.width / gl.canvas.height;
+				  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+				  projMat = matrixPerspective(45,aspect,-1,-1000);
+				  //projMat = matrixOrtho(-30,30,-30,30,-30,30);
+				  createMap();
+				  //
+				  var color11 = [0.9,0.4,0.7];
+				  var color21 = [0.3,0.1,0.2];
+				  var playerColor = [51/255,153/255,1];
+				  myCylinder = new Cylinder(gl,5,2,1,5,10,color11,color21);
+				  color1 = [0.4,0.2,0.7];
+				  color2 = [0.2,0.74,0.537];
+				  myCylinder2 = new Cylinder(gl,5,0.5,2,4,5,color11,color21);
+				  player = new Player(gl,1.1,playerColor,1,[2,2,0]);
+				  foco = new Player(gl,0.2,playerColor,1,[0,0,0]);
+				  console.log(myCylinder2.tapa_v.length);
+				  console.log(myCylinder2.tapa_c.length);
+				  //
+				  display();
+		        	
+		    }});
     }});
-  createShape();
+    
 
 
-  projMat = Mat4();
-  var aspect =  gl.canvas.width / gl.canvas.height;
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-  projMat = matrixPerspective(45,aspect,-1,-1000);
-  //projMat = matrixOrtho(-30,30,-30,30,-30,30);
-  createMap();
-  //
-  var color11 = [0.9,0.4,0.7];
-  var color21 = [0.3,0.1,0.2];
-  var playerColor = [51/255,153/255,1];
-  myCylinder = new Cylinder(gl,5,2,1,5,10,color11,color21);
-  color1 = [0.4,0.2,0.7];
-  color2 = [0.2,0.74,0.537];
-  myCylinder2 = new Cylinder(gl,5,0.5,2,4,5,color11,color21);
-  player = new Player(gl,1.1,playerColor,1,[2,2,0]);
-  foco = new Player(gl,0.2,playerColor,1,[0,0,0]);
-  console.log(myCylinder2.tapa_v.length);
-  console.log(myCylinder2.tapa_c.length);
-  //
-  display();
-  requestAnimationFrame(display);
+  
+ // requestAnimationFrame(display);
 
 /*  return{
   	avanzar:avanza(),
