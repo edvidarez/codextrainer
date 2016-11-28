@@ -531,7 +531,7 @@ function moveLeft()
    var projMat;
  var myMap = [];
 function createMap(){
-      
+      	myMap = new Array();
         for(var k in world)
         {
            var color = [Math.random(),Math.random(),Math.random()];
