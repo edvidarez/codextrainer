@@ -1,13 +1,10 @@
 <?php 
 session_start();
-if(!isset($_SESSION['UserID']))
-{
-	echo '<script>window.location="index.php"; </script>';
-}
+
 include 'DB/conexion.php';
 
 function fetch_eventos($uid)
-{
+{ 
 	$link=mysqli_connect('31.170.166.58','u234139896_todo','edmundo01','u234139896_todo') or die("nop");
 	$query = "SELECT * from eventos where id_usuario = $uid";
 	$rs=mysqli_query($link,$query);
@@ -73,6 +70,8 @@ function renderWorld()
 	//echo "<script>console.log('".$world."');</script>";
 	//echo '<script>window.open("render_world.php", "", "width=800,height=600"); </script>';
 }
+
+
 switch($_REQUEST['cmd'])
 {
 	case "eventos":
@@ -89,4 +88,9 @@ switch($_REQUEST['cmd'])
 		UX();
 		break;
 }
+
+
+$data=	 array("world"=>$_SESSION['tmp_world'],"x"=>$_SESSION['x'],"y"=>$_SESSION['y']);
+echo json_encode($data); 	
+
  ?>

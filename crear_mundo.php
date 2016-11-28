@@ -24,6 +24,16 @@
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
+<script src="js/jquery-2.1.1.js"></script>
+
+<script src="js/bootstrap.min.js"></script>
+
+<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+
+<script src="js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
+<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+
  <!-- CodeMirror -->
    <!--  <link rel=stylesheet href="js/plugins/codemirror/doc/docs.css"> -->
 <!--     <script src="js/plugins/codemirror/lib/codemirror.js"></script>
@@ -50,16 +60,16 @@ canvas {
 <body>
 
       <?php 
-            include "left_bar.php";
-            include("nav.php");
+           /* include "left_bar.php";
+            include("nav.php");*/
          ?>
 
 
 <div class="wrapper wrapper-content">
     <div class="row animated fadeInDown">
         <div class="row">
-                <div class="col-lg-8">
-                    <div class="ibox ">
+                <div class="col-lg-6">
+                    <div class="ibox" id="areaGrid">
                         <div class="ibox-title">
                             <h5>WorldEditor|Hola mundo</h5>
                         </div>
@@ -88,7 +98,26 @@ canvas {
                                     <div class="col-md-3">
                                     <p> Título</p>
                                         <input class="input_title" placeholder="Título" id="titulo"></input>
-                                    </div><div class="col-md-3">
+                                    </div>
+                                    </div>
+                                    <div class="row">
+                                    <div class="col-md-3">
+
+                                        <p class="font-bold">
+                                           Altura:
+                                        </p>
+
+                                        <input class="touchspin1" type="text" value="0" id="inspector_altura">
+                                    </div>
+                                    <div class="col-md-3">
+
+                                        <p class="font-bold">
+                                            Zumbadores
+                                        </p>
+
+                                        <input class="touchspin1" type="text" value="0" id="inspector_zumbadores">
+                                    </div>
+                                    <div class="col-md-3">
                                    
                                     <button type="button" class="btn btn-w-m btn-info" id="preview_world">Ver</button>
                                         <button type="button" class="btn btn-w-m btn-success" id="save">Guardar</button>
@@ -101,8 +130,18 @@ canvas {
 
                         </div>
                     </div>
+                
+                         <div id="canvasArea" class="row" style="display: none;">
+                            <div class="col-lg-12">
+                                <div id = "canvas_div" >
+                                  <canvas id="canvas"></canvas>
+                                  
+                                </div>
+                                
+                            </div>
+                    </div>       
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-6">
                     <div class="ibox ">
                         <div class="ibox-title">
                             <h5>WorldEditor|Inspector</h5>
@@ -113,24 +152,9 @@ canvas {
                                 <strong>Inspector</strong><br>
                                 Aqui puedes editar los atributos del mapa.
                             </p>
-                            <div class="row">
-                                    <div class="col-md-12">
+                            
 
-                                        <p class="font-bold">
-                                           Altura:
-                                        </p>
-
-                                        <input class="touchspin1" type="text" value="0" id="inspector_altura">
-                                    </div>
-                                    <div class="col-md-12">
-
-                                        <p class="font-bold">
-                                            Zumbadores
-                                        </p>
-
-                                        <input class="touchspin1" type="text" value="0" id="inspector_zumbadores">
-                                    </div>
-                                </div>
+                            <textarea id="code"></textarea>
                                
 
                         </div>
@@ -138,6 +162,7 @@ canvas {
                 </div>
 
             </div>
+            
         </div>
         
     </div>
@@ -146,27 +171,17 @@ canvas {
 
 
 <?php 
-    include "footer.php";
+   // include "footer.php";
  ?>
 </div>
 
 </div>
 
 <!-- Mainly scripts -->
-<script src="js/jquery-2.1.1.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
-<script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
 
 <!-- Custom and plugin javascript -->
-<script src="js/inspinia.js"></script>
-<script src="js/plugins/pace/pace.min.js"></script>
-<!-- TouchSpin -->
-    <script src="js/plugins/touchspin/jquery.bootstrap-touchspin.min.js"></script>
-<!-- jQuery UI custom -->
-<script src="js/jquery-ui.custom.min.js"></script>
-<!-- iCheck -->
-<script src="js/plugins/iCheck/icheck.min.js"></script>
+
   <script>
    var colums = document.getElementById("col").value;
   var rows = document.getElementById("row").value;
@@ -358,16 +373,7 @@ $(".touchspin1").TouchSpin({
                 buttonup_class: 'btn btn-white',
                 initval: 0
             });
-function getWorld()
-{
-    var myWorld = [];
-            
-            myWorld.push({
-                "world":elements
 
-            });
-            return myWorld;
-}
 $("#save").on("click",function()
     {
         titulo = document.getElementById("titulo");
@@ -401,23 +407,42 @@ $("#save").on("click",function()
             });
         }
     });
-    $("#preview_world").on("click",function(event){
-       //alert(toJson(getWorld()));
-         $.ajax({
-                url:'ajax.php?cmd=renderWorld',
-                method:"POST",
-                data: {world:toJson(getWorld()).replace('\n',''),ligths:ligths,titulo:titulo.value,"x":colums,"y":rows},
-                datatype:"json",
-                success:function(response)
-                {
-                    console.log(response);
-                   window.open("render_world.php", "", "width=800,height=600");
-                }
-
-
-            });
-    });
+ 
 </script>
+ <script src="js/plugins/codemirror/lib/codemirror.js"></script>
+    <script src="js/plugins/codemirror/mode/clike/clike.js"></script>
+    <script src="js/plugins/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="js/plugins/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="js/plugins/codemirror/addon/hint/show-hint.js"></script>
+
+    <link href="js/plugins/codemirror/lib/codemirror.css" rel="stylesheet">
+    <link href="js/plugins/codemirror/addon/hint/show-hint.css" rel="stylesheet">
+    <link href="css/plugins/codemirror/monokai.css" rel="stylesheet">
+
+    <script src="js/jquery-2.1.1.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<script type="text/javascript" src="Mat4.js"></script>
+<script id="2d-vertex-shader" type="notjs"></script>
+<script id="2d-fragment-shader" type="notjs"></script>
+<script id="2d-vertex-shader2" type="notjs"></script>
+<script id="2d-fragment-shader2" type="notjs"></script>
+<script type="text/javascript" src="cylinder.js"></script>
+<script type="text/javascript" src="player.js"></script>
+<script type="text/javascript" src="stats.js"></script>
+<script type="text/javascript" src="webgl_utils.js"></script>
+<script type="text/javascript" src="webgl_helper.js"></script>
+
+
+<script src="js/plugins/pace/pace.min.js"></script>
+<!-- TouchSpin -->
+
+<!-- jQuery UI custom -->
+<!-- <script src="js/jquery-ui.custom.min.js"></script> -->
+<!-- iCheck -->
+<script src="js/plugins/iCheck/icheck.min.js"></script>
+<script data-main="release/js/common" src="js/require.js"></script>
+<!-- <script src="js/inspinia.js"></script> -->
 </body>
 <style type="text/css">
     .input_title{
@@ -427,6 +452,11 @@ $("#save").on("click",function()
         padding: 6px 12px;
         height: 34px;
     }
+    #myCanvas{
+        margin:30px 30px 30px 0px;
+    }
 </style>
+
+
 </html>
 <?php } ?>
