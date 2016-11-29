@@ -11,7 +11,9 @@ requirejs.config({
         "config":'../release/js/config',
         "tokens":'../release/js/tokens',
         "matcher":'../release/js/matcher',
-        "interaccion":'../release/js/interaccion'
+        "interaccion":'../release/js/interaccion',
+        "automata":'../release/js/automata',
+        "test":'../release/js/test'
     },
     "shim": {
         "codemirror": ['plugins/codemirror/mode/clike/clike',
@@ -21,4 +23,4 @@ requirejs.config({
     waitSeconds: 200
 });
 
-requirejs(['interaccion']);
+requirejs(['test']);
