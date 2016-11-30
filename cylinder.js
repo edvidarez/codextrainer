@@ -146,7 +146,8 @@ function Cylinder(gl,length,bottomRadius,topRadius,slices,stacks, bottomColor, t
 
 function cylinderBind(gl,c,vLoc,cLoc,nLoc)
 {
-
+	/*if(vLoc<0 || cLoc<0 || nLoc<0)
+		return;*/
 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[0]); 
 	gl.enableVertexAttribArray(vLoc);
  	gl.vertexAttribPointer(vLoc, 3,gl.FLOAT,false,0,0);
@@ -168,6 +169,8 @@ function cylinderBind(gl,c,vLoc,cLoc,nLoc)
 }
 function cylinderBindTip(gl,c,vLoc,cLoc,nLoc)
 {
+/*    if(vLoc<0 || cLoc<0 || nLoc<0)
+        return;*/
 	//tapa_v
  	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[3]);
 	//gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(c.tapa_v),gl.STATIC_DRAW);
@@ -195,6 +198,9 @@ function cylinderDraw(gl,c)
 {
 	//gl.enable(gl.CULL_FACE);
     //gl.frontFace(gl.CCW);
+//	console.log(c);
+	if(c.vertices.length <= 2)
+		return;
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[2]);
 	gl.drawElements(gl.TRIANGLE_STRIP,c.Indexes.length-2,gl.UNSIGNED_SHORT,0);
 }

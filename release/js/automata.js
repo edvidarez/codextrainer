@@ -1,7 +1,8 @@
 /**
  * Created by Edmundo on 28/11/2016.
  */
-define(function () {
+define(function (require) {
+
     var expresiones_logicas = [
         "frente_libre",
         "frente_bloqueado",
@@ -91,6 +92,7 @@ define(function () {
     Sq4.name = "q4";
 
     Sq0['transiciones'].push(new TransicionPila(["("],Sq0, function(w){
+                            console.log("se altero el stack");
                             Sstack="("+Sstack;
                             return true;
                     }));
@@ -101,11 +103,13 @@ define(function () {
                                 if(Sstack.length==0)
                                 {
                                     Sstack = w;
+                                    console.log("se altero el stack");
                                 }
                                 else {
                                     if(!(Sstack[0] == 'y' || Sstack[0] =='o'))
                                     {
                                         Sstack = w + Sstack;
+                                        console.log("se altero el stackyo");
                                     }
 
                                 }
@@ -114,14 +118,17 @@ define(function () {
 
 
     Sq2['transiciones'].push(new TransicionPila(["y","o"],Sq0, function(w){
+        console.log("regreso");
         return true;
     }));
     Sq2['transiciones'].push(new TransicionPila(["("],Sq2, function(w){
                     if(!(Sstack[0] == 'y' || Sstack[0] =='o')) // posible cambio mas adelante
                     {
                         Sstack = w + Sstack;
+                        console.log("se altero el stack sq2(");
                     }
                     else {
+                        console.log("se altero el stack[0](");
                         Sstack[0]='('; // quita lo que este en el top y pone parentecis
                     }
         return true;
@@ -154,12 +161,13 @@ define(function () {
                 Sstack = w;
             }
         }
+                console.log("Stack raro: "+Sstack);
                     if(w=='y')
                     {
                         switch (Sstack)
                         {
-                            case "":
-                            case "(":
+                            case "": return true; break;
+                            case "(": return true; break;
                             case "y": return true; break;
                         }
                     }
@@ -167,9 +175,9 @@ define(function () {
                     {
                         switch (Sstack)
                         {
-                            case "":
-                            case "(":
-                            case "y": return true; break;
+                            case "": return true; break;
+                            case "(": return true; break;
+                            case "o": return true; break;
                         }
                     }
 
@@ -192,7 +200,7 @@ define(function () {
                 }
     }));
     Sq1['transiciones'].push(new TransicionPila("***",Sq4,function(w){
-        if( Ssack =='')
+        if( Sstack =='')
         {
             RESPONSESI = true;
             console.log("cambio al final");
@@ -241,7 +249,7 @@ define(function () {
             return expresiones_logicas[el];
         }
         else {
-            console.log("no se encontro '"+str[pos]+"'");
+            console.log("no se encontro Match'"+str[pos]+"'");
             return '-1';
         }
         //buscara la expresion logica dentro del automata si existe, si no retorna -1
@@ -250,6 +258,7 @@ define(function () {
     var RESPONSESI =false;
     function analizarSi(exp,current_state,pos) {
         console.log("Actual State: "+current_state.name);
+        console.log("todavia le quedan: "+(exp.length-pos));
         if(pos>exp.length)
         {
             console.log(pos+">"+exp.length);
@@ -298,11 +307,14 @@ define(function () {
                 {
                     console.log("Se cambio de estado a "+current_state['transiciones'][k]['estado'].name);
                     var StashStack = Sstack;
-                    current_state['transiciones'][k]['func'](toTest);
-                    console.log("Stack "+Sstack);
-                    if(current_state['transiciones'][k]['func'](toTest))
-                        analizarSi(exp,current_state['transiciones'][k]['estado'],pos+toTest.length);
-                    Sstack = StashStack;
+                    //current_state['transiciones'][k]['func'](toTest);
+
+                    if(current_state['transiciones'][k]['func'](toTest)) {
+                        console.log("Stack "+Sstack);
+                        analizarSi(exp, current_state['transiciones'][k]['estado'], pos + toTest.length);
+                        Sstack = StashStack;
+                    }
+
                 }
                // console.log(p);
             }
@@ -322,7 +334,9 @@ define(function () {
                 if(line[0]==='r' && line[1]==='e' && line[2]==='p' && line[3]==='e' && line[4]==='t' && line[5]==='i' && line[6]==='r')
                 {
                     exp = line.slice(7,line.length-5);
-                    if(!isNaN(exp))
+                    console.log(exp);
+                  //  console.log(isNaN(exp));
+                    if(isNaN(exp))
                     {
                         console.log("error en repetir");
                     }

@@ -1,4 +1,5 @@
 attribute vec3 vertexPosition;
+attribute vec3 vertexColor;
 attribute vec3 vertexNormal;
 
 uniform mat4 modelMatrix;

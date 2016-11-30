@@ -204,17 +204,7 @@ renderGrid();
 	            return myWorld;
 	}
 
-   $("#preview_world").on("click",function(event){
-       //alert(toJson(getWorld()));
 
-       	world = elements;
-       	globalx = colums;
-       	globaly = rows;
-       	createMap();
-       	console.log(world[0]);
-                   $('#areaGrid').hide();      
-                   $('#canvasArea').show();
-                });
 /*
 var world = "";
      var globalx = "";
@@ -285,7 +275,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
 }
 var vertexPosLoc,vertexColLoc,vertexNorLoc,modelMatrixLoc,projMatrixLoc,viewMatrixLoc;
 var vertexPosLoc2,vertexColLoc2,modelMatrixLoc2,projMatrixLoc2,viewMatrixLoc2;
-var ambientLigthLoc,diffuseLigthLoc,ligthPositionLoc,materialALoc,materialDLoc;
+var ambientLigthLoc,diffuseLigthLoc,lightPositionLoc,materialALoc,materialDLoc;
 var materialSLoc,cameraPositionLoc,exponentLoc,lightColorLoc;
 var program,program_texture;
 var gl;
@@ -311,6 +301,7 @@ function initShaders()
    
 
     //crea el programa con el vertex y el fragment shader
+    console.log(vertexShader);
     program = createProgram(gl, vertexShader, fragmentShader);
     //localizacion
    
@@ -451,7 +442,8 @@ function createMap(){
 
    }
   function avanza()
-  { 
+  {
+      console.log("avanza");
       switch(player.orientation)
       {
         case 0: player.position[1]--; break;
@@ -503,8 +495,81 @@ function createMap(){
       //regresar a idle una vez acabada la animacion
       playerAction =0;
   }
-
- function display(now)
+function frenteLibre(w)
+{   var x,y;
+    var h1,h2;
+    x=player.position[0];
+    y=player.position[1];
+    h1=getWorldHeight(x,y);
+    switch((player.orientation+w)%4)
+    {
+        case 0: y--; break;
+        case 1: x--; break;
+        case 2: y++; break;
+        case 3: x++; break;
+    }
+    h2=getWorldHeight(x,y);
+    if(h1>=h2)
+    {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+function frenteBloqueado(){
+      return !frenteLibre(0);
+}
+function izquierdaLibre(){
+    return frenteLibre(1);
+}
+function izquierdaBloqueada(){
+    return !izquierdaLibre();
+}
+function derechaLibre(){
+    return frenteLibre(3);
+}
+function derechaBloqueada()
+{
+    return !derechaLibre();
+}
+function orientadoAlNorte()
+{
+    return player.orientation == 0;
+}
+function noOrientadoAlNorte()
+{
+    return player.orientation !=0;
+}
+    function orientadoAlEste()
+    {
+        return player.orientation == 1;
+    }
+    function noOrientadoAlEste()
+    {
+        return player.orientation !=1;
+    }
+    function orientadoAlSur()
+    {
+        return player.orientation == 2;
+    }
+    function noOrientadoAlSur()
+    {
+        return player.orientation !=2;
+    }
+    function orientadoAlOeste()
+    {
+        return player.orientation == 3;
+    }
+    function noOrientadoAlOeste()
+    {
+        return player.orientation !=3;
+    }
+    function apagate()
+    {
+        player.encendido = false;
+    }
+ function display(now,unique)
  {
   stats.begin();
     
@@ -557,7 +622,7 @@ gl.clear(gl.COLOR_BUFFER_BIT| gl.DEPTH_BUFFER_BIT);
   var cont =0;
 for(var k in world)
       {
-      //  console.log(k);
+       // console.log(k);
        
           var csMat = Mat4();
         // csMat = rotateY (csMat,-angleZ*2);
@@ -605,7 +670,7 @@ for(var k in world)
      switch(playerAction)
   {
     case 0 : idle();break;
-    case 1 : avanza(); break;
+    case 1 : if(frenteLibre())avanza(); break;
     case 2 : giraIzquierda(); break;
     case 3 : brinca(); break;
     default : break;
@@ -617,10 +682,10 @@ for(var k in world)
 
     //player face
  
-    playerFaceBind(gl,player,vertexPosLoc,vertexColLoc,vertexNorLoc);
+  /*  playerFaceBind(gl,player,vertexPosLoc,vertexColLoc,vertexNorLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
-    playerFaceDraw(gl,player);
+    playerFaceDraw(gl,player);*/
 
     //player compass
     playerCompassMtx = rotateY(playerMtx,idleStat*100 - player.orientation*90);
@@ -633,113 +698,149 @@ for(var k in world)
 
     stats.end();
    // setTimeout(function() {
-    
-     requestAnimationFrame(display);
-    
+        //console.log("asd");
+     if(!unique)
+        requestAnimationFrame(display);
+
    
   // },1000/67);
    
  }
-
+    var lastDownTarget;
  //MAIN
-var lastDownTarget, canvas;
+    function World_main()
+    {
+        world = elements;
+        globalx = colums;
+        globaly = rows;
+        canvas = document.getElementById('canvas');
 
-  canvas = document.getElementById('canvas');
+        document.addEventListener('mousedown', function(event) {
+            lastDownTarget = event.target;
+            console.log(lastDownTarget);
 
-    document.addEventListener('mousedown', function(event) {
-        lastDownTarget = event.target;
-        console.log(lastDownTarget);
-      
-    }, false);
+        }, false);
 
-    document.addEventListener('keydown', function(event) {
-        if(lastDownTarget == canvas) {
-					           var key = event.which;
-					  console.log(playerAction);
-					  switch(key) {
-					    case 65: motionType = 9; break; //A
-					    case 68: motionType = 10; break; //D
-					    case 87: motionType = 1; break; //W
-					    case 83: motionType = 2; break; //S
-					    case 85: motionType = 5; break; //U
-					    case 73: motionType = 7; break; //I
-					    case 74: motionType = 6; break; //J
-					    case 75: motionType = 8; break; //K
-					    case 81: motionType = 4; break; //Q
-					    case 69: motionType = 3; break; //E
-					   
+        document.addEventListener('keydown', function(event) {
+            if(lastDownTarget == canvas) {
+                var key = event.which;
+                console.log(playerAction);
+                switch(key) {
+                    case 65: motionType = 9; break; //A
+                    case 68: motionType = 10; break; //D
+                    case 87: motionType = 1; break; //W
+                    case 83: motionType = 2; break; //S
+                    case 85: motionType = 5; break; //U
+                    case 73: motionType = 7; break; //I
+                    case 74: motionType = 6; break; //J
+                    case 75: motionType = 8; break; //K
+                    case 81: motionType = 4; break; //Q
+                    case 69: motionType = 3; break; //E
 
-					   case 100: lightMotion = 1; break; //4
-					   case 98: lightMotion = 3; break;  //2
-					   case 104: lightMotion = 4; break;  //8
-					   case 102: lightMotion = 2; break;  //6
-					   case 99: lightMotion = 5; break;   //3
-					   case 105: lightMotion = 6; break;  //9
 
-					  }
-					  if(playerAction!=-1)
-					  {
-					    switch(key)
-					    {
-					       case 32: playerAction = 3; break; //--
-					    case 37: playerAction = 2; break; //<-
-					    case 38: playerAction = 1; break; //^
-					    }
-					  }
-					  console.log(event.which);
-        }
-    }, false);
-	
+                    case 100: lightMotion = 1; break; //4
+                    case 98: lightMotion = 3; break;  //2
+                    case 104: lightMotion = 4; break;  //8
+                    case 102: lightMotion = 2; break;  //6
+                    case 99: lightMotion = 5; break;   //3
+                    case 105: lightMotion = 6; break;  //9
 
-document.addEventListener("keyup", function(event){
-  motionType=0;
-  lightMotion=0;
-}); 
-$(document).ready(function(){
-	 $.ajax({url: "shaders/vs/gourand2.c", success: function(result){
+                }
+                if(playerAction!=-1)
+                {
+                    switch(key)
+                    {
+                        case 32: playerAction = 3; break; //--
+                        case 37: playerAction = 2; break; //<-
+                        case 38: playerAction = 1; break; //^
+                    }
+                }
+                console.log(event.which);
+            }
+        }, false);
 
-        $("#2d-vertex-shader").html(result);
-        $.ajax({url: "shaders/fs/color.c", success: function(result){
-    	
-		        $("#2d-fragment-shader").html(result);
-		        	initShaders();
-		        	projMat = Mat4();
-				  var aspect =  gl.canvas.width / gl.canvas.height;
-				  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-				  projMat = matrixPerspective(45,aspect,-1,-1000);
-				  //projMat = matrixOrtho(-30,30,-30,30,-30,30);
-				  createMap();
-				  //
-				  var color11 = [0.9,0.4,0.7];
-				  var color21 = [0.3,0.1,0.2];
-				  var playerColor = [51/255,153/255,1];
-				  myCylinder = new Cylinder(gl,5,2,1,5,10,color11,color21);
-				  color1 = [0.4,0.2,0.7];
-				  color2 = [0.2,0.74,0.537];
-				  myCylinder2 = new Cylinder(gl,5,0.5,2,4,5,color11,color21);
-				  player = new Player(gl,1.1,playerColor,1,[2,2,0]);
-				  foco = new Player(gl,0.2,playerColor,1,[0,0,0]);
-				  console.log(myCylinder2.tapa_v.length);
-				  console.log(myCylinder2.tapa_c.length);
-				  //
-				  display();
-		        	
-		    }});
-    }});
-    
+        document.addEventListener("keyup", function(event){
+            motionType=0;
+            lightMotion=0;
+        });
+
+
+            console.log(  lightPositionLoc);
+
+                initShaders();
+
+            console.log(  lightPositionLoc);
+            projMat = Mat4();
+            var aspect =  gl.canvas.width / gl.canvas.height;
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+            projMat = matrixPerspective(45,aspect,-1,-1000);
+            //projMat = matrixOrtho(-30,30,-30,30,-30,30);
+            createMap();
+            //
+            var color11 = [0.9,0.4,0.7];
+            var color21 = [0.3,0.1,0.2];
+            var playerColor = [51/255,153/255,1];
+            myCylinder = new Cylinder(gl,5,2,1,5,10,color11,color21);
+            color1 = [0.4,0.2,0.7];
+            color2 = [0.2,0.74,0.537];
+            myCylinder2 = new Cylinder(gl,5,0.5,2,4,5,color11,color21);
+            player = new Player(gl,1.1,playerColor,1,[2,2,0]);
+            foco = new Player(gl,0.2,playerColor,1,[0,0,0]);
+           // console.log(myCylinder2.tapa_v.length);
+           // console.log(myCylinder2.tapa_c.length);
+            //
+        display(0,0);
 
 
 
-  
- // requestAnimationFrame(display);
 
-/*  return{
-  	avanzar:avanza(),
-  	girarIzquierda:giraIzquierda()
-  }*/
- 
-});
+
+
+
+          //   requestAnimationFrame(display);
+
+            /*  return{
+             avanzar:avanza(),
+             girarIzquierda:giraIzquierda()
+             }*/
+
+    }
+
+    return {
+        main:World_main,
+        display:display,
+        avanza:avanza,
+        gira_izquierda:giraIzquierda,
+        brinca:brinca,
+        apagate:apagate,
+
+        frente_libre:frenteLibre,
+        frente_bloqueado:frenteBloqueado,
+        izquierda_libre:izquierdaLibre,
+        izquierda_bloqueada:izquierdaBloqueada,
+        derecha_bloqueada:derechaBloqueada,
+        derecha_libre:derechaLibre,
+
+
+        orientado_al_nore:orientadoAlNorte,
+        no_orientado_al_norte:noOrientadoAlNorte,
+        orientado_al_este:orientadoAlEste,
+        no_orientado_al_este:noOrientadoAlEste,
+        orientado_al_sur:orientadoAlSur,
+        no_orientado_al_sur:noOrientadoAlSur,
+        orientado_al_oeste:orientadoAlOeste,
+        no_orientado_al_oeste:noOrientadoAlOeste
+
+
+
+    }
+
+
+
+
+
    
    // three 2d points
 
