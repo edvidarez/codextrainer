@@ -11,7 +11,7 @@ define(function (require) {
   }
 }
 
-var timer=3000;
+var timer=1000;
 var interaccion = require("interaccion");
 var isInAnimation=false;
     var expresiones_logicas = [
@@ -383,30 +383,24 @@ var isInAnimation=false;
     var PlayerPos =[0,0];
     function ejecutaSi(exp)
     {
-        var funciones_logicas = {
-        "frente_libre":interaccion.frente_libre(Playerorientacion,PlayerPos),
-        "frente_bloqueado":interaccion.frente_bloqueado(Playerorientacion,PlayerPos),
-        "izquierda_libre":interaccion.izquierda_libre(Playerorientacion,PlayerPos),
-        "izquierda_bloqueada":interaccion.izquierda_bloqueada(Playerorientacion,PlayerPos),
-        "derecha_bloqueada":interaccion.derecha_bloqueada(Playerorientacion,PlayerPos),
-        "derecha_libre":interaccion.derecha_libre(Playerorientacion,PlayerPos),
-
-        "orientado_al_norte":interaccion.orientado_al_norte(Playerorientacion),
-        "no_orientado_al_norte":interaccion.no_orientado_al_norte(Playerorientacion),
-        "orientado_al_este":interaccion.orientado_al_este(Playerorientacion),
-        "no_orientado_al_este":interaccion.no_orientado_al_este(Playerorientacion),
-        "orientado_al_sur":interaccion.orientado_al_sur(Playerorientacion),
-        "no_orientado_al_sur":interaccion.no_orientado_al_sur(Playerorientacion),
-        "orientado_al_oeste":interaccion.orientado_al_oeste(Playerorientacion),
-        "no_orientado_al_oeste":interaccion.no_orientado_al_oeste(Playerorientacion)
+        switch(exp)
+        {
+            case "frente_libre": return interaccion.frente_libre(Playerorientacion,PlayerPos); break;
+           case "frente_bloqueado": return interaccion.frente_bloqueado(Playerorientacion,PlayerPos); break;
+           case "izquierda_libre": return interaccion.izquierda_libre(Playerorientacion,PlayerPos); break;
+           case "izquierda_bloqueada": return interaccion.izquierda_bloqueada(Playerorientacion,PlayerPos); break;
+           case "derecha_bloqueada": return interaccion.derecha_bloqueada(Playerorientacion,PlayerPos); break;
+           case "derecha_libre": return interaccion.derecha_libre(Playerorientacion,PlayerPos); break;
+           case "orientado_al_norte": return interaccion.orientado_al_norte(Playerorientacion); break;
+           case "no_orientado_al_norte": return interaccion.no_orientado_al_norte(Playerorientacion); break;
+           case "orientado_al_este": return interaccion.orientado_al_este(Playerorientacion); break;
+           case "no_orientado_al_este": return interaccion.no_orientado_al_este(Playerorientacion); break;
+           case "orientado_al_sur": return interaccion.orientado_al_sur(Playerorientacion); break;
+           case "no_orientado_al_sur": return interaccion.no_orientado_al_sur(Playerorientacion); break;
+           case "orientado_al_oeste": return interaccion.orientado_al_oeste(Playerorientacion); break;
+           case "no_orientado_al_oeste": return interaccion.no_orientado_al_oeste(Playerorientacion); break;
         }
-        ;
-           var value= false;
-        setTimeout((function(){
-           value= funciones_logicas[exp];
-        
-        },timer+1000));
-     return value ;
+     
 
     }
 
@@ -527,7 +521,7 @@ var isInAnimation=false;
                          
                             if(line=="avanza;" || line=="brinca;" || line=="gira_izquierda;")
                             {
-                                   timer+=3000;
+                                   timer+=1000;
                                    if(line=="avanza;"||line =="brinca")
                                    {
                                     switch(Playerorientacion)
@@ -546,7 +540,7 @@ var isInAnimation=false;
                                    }
                                }else
                                {
-                                timer+=1500;
+                                timer+=500;
                                }
 
                             current_state['transiciones'][t].delay(timer);
@@ -576,7 +570,7 @@ var isInAnimation=false;
             }
             else
             {
-                //alert("Error");
+                alert("Error");
             }
             return current_state['final'] && ! banderaError;
         },0);

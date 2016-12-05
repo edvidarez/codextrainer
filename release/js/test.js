@@ -1,7 +1,8 @@
 define(function (require) {
+     var main = require("main");
     var automata= require("automata");
     
-    var main = require("main");
+   
 
 
    
@@ -25,7 +26,7 @@ define(function (require) {
     */
     $("#preview_world").on("click",function(){
         //alert(toJson(getWorld()));
-
+            console.log("test");
 		 var code = main.getCodeResult();
 	    automata.analizar(code);
         

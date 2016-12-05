@@ -21,6 +21,7 @@ function Player(gl,size, color,orientation,position) {
 	var brujula_vetices,brujula_color,brujula_indexes;
 	var cara_vertices,cara_colores,cara_indexes;
 	var orientation,position,brujula_normals;
+	var ojos_vertices,ojos_color,ojos_Indexes;
 	var normals;
 	this.brujula_normals = new Array();
 	this.bufferIDs = new Array();
@@ -29,6 +30,7 @@ function Player(gl,size, color,orientation,position) {
 	this.colores = new Array();
 	this.Indexes = new Array();
 	this.cara_colores = new Array();
+	this.ojos_color = new Array();
 	this.position = position;
 	this.orientation = orientation;  //1: norte, 2:oeste, 3:sur, 4:este
 	this.bufferIDs[0] = gl.createBuffer();   //vertices
@@ -46,6 +48,10 @@ function Player(gl,size, color,orientation,position) {
 	this.bufferIDs[8] = gl.createBuffer();	//index
 
 	this.bufferIDs[9] = gl.createBuffer();	//texture
+
+	this.bufferIDs[12] = gl.createBuffer();
+	this.bufferIDs[13] = gl.createBuffer();
+	this.bufferIDs[14] = gl.createBuffer();
 
 
 
@@ -125,7 +131,8 @@ function Player(gl,size, color,orientation,position) {
 		*/
 		var pz = size/6;  //unidades para mantener la proporcion de la cara con respecto del tamaño
 		this.cara_vertices= [
-			-4*pz, pz, -size-0.01,
+
+			-4*pz, pz, -size-0.01,			//			
 			-4*pz, 4*pz, -size-0.01,
 			-pz, pz, -size-0.01,
 			-pz, 4*pz, -size-0.01,  
@@ -140,7 +147,7 @@ function Player(gl,size, color,orientation,position) {
 			4*pz, -4*pz, -size-0.01,
 			4*pz, -pz, -size-0.01
 			
-		];
+		];	
 
 		this.cara_indexes = [0,1,2,3,3,4,4,5,6,7,7,8,8,9,10,11];
 		for(i=0;i<36;i++)
@@ -148,7 +155,25 @@ function Player(gl,size, color,orientation,position) {
 			this.cara_colores[i] = 1;
 		}
 
+		this.ojos_vertices = [
+				-3*pz,2*pz,-size-0.02,
+				-3*pz,3*pz,-size-0.02,
+				-2*pz,2*pz,-size-0.02,
+				-2*pz,3*pz,-size-0.02,
 
+
+				2*pz,2*pz,-size-0.02,
+				2*pz,3*pz,-size-0.02,
+				3*pz,2*pz,-size-0.02,
+				3*pz,3*pz,-size-0.02
+
+
+		];
+		for(i=0;i<this.ojos_vertices.length;i++)
+		{
+			this.ojos_color[i]=0;
+		}
+		this.ojos_Indexes=[0,1,2,3,3,4,4,5,6,7];
 
 	  
 	var textureCoordinates = [
@@ -227,9 +252,18 @@ function Player(gl,size, color,orientation,position) {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(this.cara_indexes),gl.STATIC_DRAW);
 
 
+
+ 	gl.bindBuffer(gl.ARRAY_BUFFER,this.bufferIDs[12]);  
+	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.ojos_vertices),gl.STATIC_DRAW);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER,this.bufferIDs[13]);
+	gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(this.ojos_color),gl.STATIC_DRAW);
+
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,this.bufferIDs[14]);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(this.ojos_Indexes),gl.STATIC_DRAW);
 }
 
-function  playerBind(gl,c,vLoc,cLoc,nLoc)
+function  playerBind(gl,c,vLoc,cLoc)
 {
 
 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[0]);
@@ -240,13 +274,11 @@ function  playerBind(gl,c,vLoc,cLoc,nLoc)
 	gl.enableVertexAttribArray(cLoc);
  	gl.vertexAttribPointer(cLoc, 3,gl.FLOAT,false,0,0);
 
-	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[10]);
+/*	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[10]);
 	gl.enableVertexAttribArray(nLoc);
- 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);
+ 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);*/
 
- 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[2]);
- 	
-
+ 
 
     gl.enable(gl.DEPTH_TEST);
 }
@@ -258,7 +290,7 @@ function playerDraw(gl,c)
 	gl.drawElements(gl.TRIANGLE_STRIP,c.Indexes.length,gl.UNSIGNED_SHORT,0);
 }
 
-function  playerCompassBind(gl,c,vLoc,cLoc,nLoc)
+function  playerCompassBind(gl,c,vLoc,cLoc)
 {
 	//console.log("a");
 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[3]);
@@ -270,9 +302,9 @@ function  playerCompassBind(gl,c,vLoc,cLoc,nLoc)
  	gl.vertexAttribPointer(cLoc, 3,gl.FLOAT,false,0,0);
 
 
-	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[11]);
+	/*gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[11]);
 	gl.enableVertexAttribArray(nLoc);
- 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);
+ 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);*/
 
  	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[5]);
 
@@ -308,4 +340,21 @@ function playerFaceDraw(gl,c)
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[8]);
 	gl.drawElements(gl.TRIANGLE_STRIP,c.cara_indexes.length,gl.UNSIGNED_SHORT,0);
 	//console.log("playerCompassDraw");
+}
+function playerEyesBind(gl,c,vLoc,cLoc)
+{
+	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[12]);
+	gl.enableVertexAttribArray(vLoc);
+ 	gl.vertexAttribPointer(vLoc, 3,gl.FLOAT,false,0,0);
+
+	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[13]);
+	gl.enableVertexAttribArray(cLoc);
+ 	gl.vertexAttribPointer(cLoc, 3,gl.FLOAT,false,0,0);
+ 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[14]);
+
+    gl.enable(gl.DEPTH_TEST);
+}
+function playerEyesDraw(gl,c){
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[14]);
+	gl.drawElements(gl.TRIANGLE_STRIP,c.ojos_Indexes.length,gl.UNSIGNED_SHORT,0);
 }

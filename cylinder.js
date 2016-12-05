@@ -144,7 +144,7 @@ function Cylinder(gl,length,bottomRadius,topRadius,slices,stacks, bottomColor, t
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(this.tapa_x),gl.STATIC_DRAW);
 }
 
-function cylinderBind(gl,c,vLoc,cLoc,nLoc)
+function cylinderBind(gl,c,vLoc,cLoc)
 {
 
 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[0]); 
@@ -156,9 +156,9 @@ function cylinderBind(gl,c,vLoc,cLoc,nLoc)
  	gl.vertexAttribPointer(cLoc, 3,gl.FLOAT,false,0,0);
 
  	//normals
- 	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[6]);
+ /*	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[6]);
 	gl.enableVertexAttribArray(nLoc);
- 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);
+ 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);*/
  	//element buffer
  	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[2]);
    // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(c.Indexes),gl.STATIC_DRAW);
@@ -166,7 +166,7 @@ function cylinderBind(gl,c,vLoc,cLoc,nLoc)
    // gl.frontFace(gl.CW);
     gl.enable(gl.DEPTH_TEST);
 }
-function cylinderBindTip(gl,c,vLoc,cLoc,nLoc)
+function cylinderBindTip(gl,c,vLoc,cLoc)
 {
 	//tapa_v
  	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[3]);
@@ -179,11 +179,11 @@ function cylinderBindTip(gl,c,vLoc,cLoc,nLoc)
 	gl.enableVertexAttribArray(cLoc);
  	gl.vertexAttribPointer(cLoc, 3,gl.FLOAT,false,0,0);
  //	console.log("bind");
-
+/*
  //normals
  	gl.bindBuffer(gl.ARRAY_BUFFER,c.bufferIDs[7]);
 	gl.enableVertexAttribArray(nLoc);
- 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);
+ 	gl.vertexAttribPointer(nLoc, 3,gl.FLOAT,false,0,0);*/
 
  	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[5]);
     //gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(c.tapa_x),gl.STATIC_DRAW);
@@ -195,8 +195,10 @@ function cylinderDraw(gl,c)
 {
 	//gl.enable(gl.CULL_FACE);
     //gl.frontFace(gl.CCW);
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[2]);
-	gl.drawElements(gl.TRIANGLE_STRIP,c.Indexes.length-2,gl.UNSIGNED_SHORT,0);
+ 
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,c.bufferIDs[2]);
+		gl.drawElements(gl.TRIANGLE_STRIP,c.Indexes.length-2,gl.UNSIGNED_SHORT,0);
+	
 }
 function cylinderDrawTip(gl,c)
 {

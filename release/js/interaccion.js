@@ -48,11 +48,10 @@ $("#inspector_altura").on("change",function(){
     });
    
 });
-      
 
     
     
-    elements = [];
+  // elements = [];
 
     var ctrl=false;
 document.addEventListener("keydown", function(event) {
@@ -75,7 +74,7 @@ document.addEventListener("keyup", function(event){
 
 var canvas_div = document.getElementById("myCanvas");
 // Add event listener for `click` events.
-canvas_div.addEventListener('click', function(event) {
+/*canvas_div.addEventListener('click', function(event) {
     var canvasOffset = $("#myCanvas").offset();
 
       var offsetX = canvasOffset.left;
@@ -97,7 +96,7 @@ canvas_div.addEventListener('click', function(event) {
                /* context.fillStyle = '#FF0500';
                 context.fillRect(element.left, element.top, element.width, element.height);
                 context.fillStyle = '#FFFFFF';
-                context.fillRect(element.left+2, element.top+2, element.width-4, element.height-4);*/
+                context.fillRect(element.left+2, element.top+2, element.width-4, element.height-4);
                 console.log("an element was added");
             }
             else
@@ -112,7 +111,8 @@ canvas_div.addEventListener('click', function(event) {
                 renderGrid();
                 
                 inspector_altura.value=element.altura;
-                console.log(element.altura);
+               
+                //console.log(element.altura);
             }
             console.log('clicked an element '+element.description);
         }
@@ -129,9 +129,9 @@ canvas_div.addEventListener('click', function(event) {
         }
     });
 
-}, false);
+}, false);*/
 
-function drawGrid()
+/*function drawGrid()
 {
     elements=[];
     for(i=0;i<rows;i++)
@@ -146,14 +146,15 @@ function drawGrid()
                 left: 50*j,
                 description: "("+i+","+j+")",
                 altura:0,
-                selected:false
+                selected:false,
+                zumbadores:0
 
             }); 
         }
     }
     renderGrid();
 }
-drawGrid();
+drawGrid();*/
 /*elements.push({
     colour: '#FF5500',
     width: 50,
@@ -187,6 +188,11 @@ function renderGrid()
         context.fillRect(element.left+2, element.top+2, element.width-4, element.height-4);
         context.fillStyle = '#000000';
         context.fillText(element.altura,element.left+20,element.top+20);
+        if(element.zumbadores>0)
+        {
+          context.fillStyle = '#00FF00';
+          context.fillText(element.zumbadores,element.left+20,element.top-10);
+        }
     });
 }
 renderGrid();
@@ -307,21 +313,21 @@ function initShaders()
    
     vertexPosLoc   = gl.getAttribLocation(program, "vertexPosition");
     vertexColLoc   = gl.getAttribLocation(program, "vertexColor");
-    vertexNorLoc   = gl.getAttribLocation(program, "vertexNormal");
+   // vertexNorLoc   = gl.getAttribLocation(program, "vertexNormal");
     modelMatrixLoc = gl.getUniformLocation(program, "modelMatrix");
     projMatrixLoc  = gl.getUniformLocation(program, "projMatrix");
     viewMatrixLoc = gl.getUniformLocation(program,"viewMatrix");
 
-    ambientLightLoc   = gl.getUniformLocation(program, "ambientLight");
+  //  ambientLightLoc   = gl.getUniformLocation(program, "ambientLight");
  // diffuseLightLoc     = gl.getUniformLocation(program, "diffuseLight");
-  lightColorLoc    = gl.getUniformLocation(program,"lightColor");
-  lightPositionLoc    = gl.getUniformLocation(program, "lightPosition");
-  materialALoc        = gl.getUniformLocation(program, "materialA");
-  materialDLoc        = gl.getUniformLocation(program, "materialD");
+ // lightColorLoc    = gl.getUniformLocation(program,"lightColor");
+ // lightPositionLoc    = gl.getUniformLocation(program, "lightPosition");
+ // materialALoc        = gl.getUniformLocation(program, "materialA");
+ // materialDLoc        = gl.getUniformLocation(program, "materialD");
   //espectacular
-  materialSLoc        = gl.getUniformLocation(program, "materialS");
-  cameraPositionLoc   = gl.getUniformLocation(program, "cameraPosition");
-  exponentLoc         = gl.getUniformLocation(program, "exponent");
+//  materialSLoc        = gl.getUniformLocation(program, "materialS");
+//  cameraPositionLoc   = gl.getUniformLocation(program, "cameraPosition");
+ // exponentLoc         = gl.getUniformLocation(program, "exponent");
 /*
 
     var vertexShaderSource2 = document.getElementById("2d-vertex-shader2").text;
@@ -339,13 +345,13 @@ function initShaders()
 */
     //faltan los loc
   gl.useProgram(program);
-  gl.uniform3fv(ambientLightLoc,   ambientLight);
+  /*gl.uniform3fv(ambientLightLoc,   ambientLight);
   gl.uniform3fv(lightColorLoc,  lightColor);
   gl.uniform3fv(lightPositionLoc,  lightPosition);
   gl.uniform3fv(materialALoc,      materialA);
   gl.uniform3fv(materialDLoc,      materialD);
   gl.uniform3fv(materialSLoc,      materialS);
-  gl.uniform1f(exponentLoc,      exponent);
+  gl.uniform1f(exponentLoc,      exponent);*/
  }
 
   function up()
@@ -400,7 +406,7 @@ function createMap(){
       	myMap = new Array();
         for(var k in world)
         {
-           var color = [Math.random(),Math.random(),Math.random()];
+           var color = [Math.random()/2 ,Math.random(),Math.random()/4*3];
     //		console.log(world[k].description);
         //  console.log(world[0][k][o].description);
           myMap.push(new Cylinder(gl,
@@ -636,18 +642,38 @@ for(var k in world)
           var csx=world[k].description[3];
           var csy = world[k].description[1];
           var h = world[k].altura;
+          var z = world[k].zumbadores;
           csMat = translate(csMat,
                             csx*global_radius*Math.sqrt(2) ,//+ cont%globalx * 0.00001
                             h*global_radius*Math.sqrt(2)/2,
                             csy*global_radius*Math.sqrt(2) );//+ cont/globaly * 0.00001
           csMat = rotateY (csMat,45);
-          cylinderBind(gl,myMap[cont],vertexPosLoc,vertexColLoc,vertexNorLoc);  
+          cylinderBind(gl,myMap[cont],vertexPosLoc,vertexColLoc);  
           gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
           gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(csMat));
+          if(h>0)
           cylinderDraw(gl,myMap[cont]);
 
-          cylinderBindTip(gl,myMap[cont],vertexPosLoc,vertexColLoc,vertexNorLoc);
+          cylinderBindTip(gl,myMap[cont],vertexPosLoc,vertexColLoc);
           cylinderDrawTip(gl,myMap[cont++]);
+
+          if(z>0)
+          {
+           
+           var dlt = 1;
+         //  console.log("h="+h);
+           if(h>0)
+           {
+             dlt=1+h*global_radius*Math.sqrt(2)/2;
+           }
+          // console.log(dlt);
+            var zum = new Zumbador(gl,1,[0,1,0]);
+            zumbadorBind(gl,zum,vertexPosLoc,vertexColLoc);
+
+            var zumbadorMtx=translate(csMat,0,dlt,0);
+            gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(zumbadorMtx));
+            zumbadorDraw(gl,zum);  
+          }
         
       }
 
@@ -675,29 +701,56 @@ for(var k in world)
      switch(playerAction)
   {
     case 0 : idle();break;
-    case 1 : if(frenteLibre())avanza(); break;
+    case 1 : if(frenteLibre(player.orientation,player.position))avanza(); break;
     case 2 : giraIzquierda(); break;
     case 3 : brinca(); break;
     default : break;
   }
-    playerBind(gl,player,vertexPosLoc,vertexColLoc,vertexNorLoc);
+    playerBind(gl,player,vertexPosLoc,vertexColLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
     playerDraw(gl,player);
 
+
+
     //player face
  
-  /*  playerFaceBind(gl,player,vertexPosLoc,vertexColLoc,vertexNorLoc);
+    playerFaceBind(gl,player,vertexPosLoc,vertexColLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
-    playerFaceDraw(gl,player);*/
+    playerFaceDraw(gl,player);
+    //player EYES
+    playerEyesBind(gl,player,vertexPosLoc,vertexColLoc);
+    gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
+    gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerMtx));
+    playerEyesDraw(gl,player);
 
     //player compass
     playerCompassMtx = rotateY(playerMtx,idleStat*100 - player.orientation*90);
-    playerCompassBind(gl,player,vertexPosLoc,vertexColLoc,vertexNorLoc);
+    playerCompassBind(gl,player,vertexPosLoc,vertexColLoc);
     gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
     gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(playerCompassMtx));
     playerCompassDraw(gl,player);
+
+    var brazoIZQMtx=translate(playerMtx,1,0,0);
+        brazoIZQMtx = rotateZ(brazoIZQMtx,-90);
+        brazoIZQMtx = rotateY(brazoIZQMtx,-2*angleZ++);
+    gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
+    gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(brazoIZQMtx));
+    cylinderBind(gl,brazo_izq,vertexPosLoc,vertexColLoc);
+    cylinderDraw(gl,brazo_izq);
+    cylinderBindTip(gl,brazo_izq,vertexPosLoc,vertexColLoc);
+    cylinderDrawTip(gl,brazo_izq);
+
+    var brazoDERMtx=translate(playerMtx,-1,0,0);
+    brazoDERMtx = rotateZ(brazoDERMtx,90);
+    brazoDERMtx = rotateY(brazoDERMtx,2*angleZ++);
+    gl.uniformMatrix4fv(projMatrixLoc,false, matValues(projMat));
+    gl.uniformMatrix4fv(modelMatrixLoc,0, matValues(brazoDERMtx));
+    cylinderBind(gl,brazo_der,vertexPosLoc,vertexColLoc);
+    cylinderDraw(gl,brazo_der);
+    cylinderBindTip(gl,brazo_der,vertexPosLoc,vertexColLoc);
+    cylinderDrawTip(gl,brazo_der);
 
 
 
@@ -830,7 +883,10 @@ for(var k in world)
             color2 = [0.2,0.74,0.537];
             myCylinder2 = new Cylinder(gl,5,0.5,2,4,5,color11,color21);
             player = new Player(gl,1.1,playerColor,0,[0,0,0]);
-            foco = new Player(gl,0.2,playerColor,0,[0,0,0]);
+            brazo_der = new Cylinder(gl,.5,0.8,1,8,8,[1,0,0],[1,0,0]);
+            brazo_izq = new Cylinder(gl,.5,0.8,1,8,8,[1,0,0],[1,0,0]);
+            
+           // foco = new Player(gl,0.2,playerColor,0,[0,0,0]);
            // console.log(myCylinder2.tapa_v.length);
            // console.log(myCylinder2.tapa_c.length);
             //
